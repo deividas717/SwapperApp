@@ -9,10 +9,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
 import app.swapper.com.swapper.R
+import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.model.CreationPresenterImpl
 import app.swapper.com.swapper.presenter.CreationPresenter
+import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.view.ItemCreationView
 import kotlinx.android.synthetic.main.activity_create_new_item.*
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -39,9 +41,12 @@ class CreateNewItemActivity : AppCompatActivity(), ItemCreationView {
         takePhotoBtn.setOnClickListener { cameraTask() }
 
         send.setOnClickListener {
-            val user = User("Tadas", "asasas", "tadas@gmail.com", "tadas")
-            val item = Item(itemTitle.text.toString(), description.text.toString(), null,46465.8,455.8, user)
-            creationPresenter.sendItemDataToServer(item, photosArray)
+            val application = applicationContext as SwaggerApp
+            val user = application.getUser()
+            user?.let {
+                val item = Item(itemTitle.text.toString(), description.text.toString(), null,46465.8,455.8, it)
+                creationPresenter.sendItemDataToServer(item, photosArray)
+            }
         }
     }
 

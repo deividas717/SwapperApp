@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import app.swapper.com.swapper.R
+import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.SwipeView
+import app.swapper.com.swapper.activity.MainActivity
 import app.swapper.com.swapper.dto.Item
-import app.swapper.com.swapper.events.OnCardChangedEvent
 import app.swapper.com.swapper.model.CardPresenterImpl
 import app.swapper.com.swapper.presenter.CardsPresenter
+import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.view.CardsView
 import com.bumptech.glide.Glide
 import com.mindorks.placeholderview.SwipeDecor
@@ -21,7 +23,6 @@ import com.mindorks.placeholderview.SwipeViewBuilder
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.NonReusable
 import com.mindorks.placeholderview.annotations.Resolve
-import org.greenrobot.eventbus.EventBus
 
 /**
  * A simple [Fragment] subclass.
@@ -43,12 +44,13 @@ class SwipeFragment : Fragment(), CardsView {
                 .setDisplayViewCount(3)
                 .setSwipeDecor(SwipeDecor().setPaddingTop(20).setRelativeScale(0.01f))
 
+        val user = (activity as MainActivity).getUser()
+
         cardsPresenter = CardPresenterImpl(this)
-        cardsPresenter.performNetworkRequest(index)
+        cardsPresenter.performNetworkRequest(user, index)
         swipeView.addItemRemoveListener { count ->
             currentItem++
-            EventBus.getDefault().post(OnCardChangedEvent(dataList[currentItem].id))
-            if (count < 5) cardsPresenter.performNetworkRequest(index)
+            if (count < 5) cardsPresenter.performNetworkRequest(user, index)
         }
 
         dataList = mutableListOf()
@@ -62,6 +64,11 @@ class SwipeFragment : Fragment(), CardsView {
         }
         dataList.addAll(list)
         index += 5;
+    }
+
+    fun getActiveCardId() : Long {
+        if (dataList.size <= currentItem) return -1L
+        return dataList[currentItem].id
     }
 
     @NonReusable

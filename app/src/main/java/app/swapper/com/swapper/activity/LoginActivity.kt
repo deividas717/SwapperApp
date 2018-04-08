@@ -3,11 +3,20 @@ package app.swapper.com.swapper.activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import app.swapper.com.swapper.R
+import app.swapper.com.swapper.dto.Item
+import app.swapper.com.swapper.dto.User
+import app.swapper.com.swapper.networking.RetrofitSingleton
+import app.swapper.com.swapper.storage.SharedPreferencesManager
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import kotlinx.android.synthetic.main.activity_login.*
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 class LoginActivity : AppCompatActivity() {
@@ -27,13 +36,8 @@ class LoginActivity : AppCompatActivity() {
 
         LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
-                val request = GraphRequest.newMeRequest(loginResult.accessToken) { user, _ ->
-                    val userId = user.getString("id")
-                    val name = user.getString("name")
-                    val email = user.getString("email")
-                    val photoPath = "https://graph.facebook.com/$userId/picture?type=large"
-
-                    startMainActivity()
+                val request = GraphRequest.newMeRequest(loginResult.accessToken) { jsonObj, _ ->
+                    createNewUser(jsonObj);
                 }
                 val parameters = Bundle()
                 parameters.putString("fields", "id, name, email")
@@ -61,6 +65,36 @@ class LoginActivity : AppCompatActivity() {
         if (AccessToken.getCurrentAccessToken() != null) {
             startActivity(Intent(this, MainActivity::class.java));
         }
+    }
+
+    private fun createNewUser(jsonObj: JSONObject) {
+        val userId = jsonObj.getString("id")
+        val name = jsonObj.getString("name")
+        val email = jsonObj.getString("email")
+        val photoUrl = "https://graph.facebook.com/$userId/picture?type=large"
+
+        val user = User(name, photoUrl, email)
+
+        val result = RetrofitSingleton.service.createUser(user)
+
+        result.enqueue(object : Callback<User> {
+            override fun onResponse(call: Call<User>?, response: Response<User>?) {
+                response.let {
+                    response?.let {
+                        if (it.isSuccessful) {
+                            val prefs = SharedPreferencesManager.getInstance(applicationContext)
+                            prefs.saveUser(user)
+
+                            startMainActivity()
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<User>?, t: Throwable?) {
+
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

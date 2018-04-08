@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * Created by Deividas on 2018-04-07.
  */
-class RetrofitSingleton {
+class RetrofitSingleton private constructor() {
     companion object Factory {
         private var client = OkHttpClient.Builder()
                 .addInterceptor(AuthenticationInterceptor("deividas717@gmail.com", "deividas"))

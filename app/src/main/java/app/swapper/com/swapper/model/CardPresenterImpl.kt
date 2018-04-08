@@ -1,6 +1,7 @@
 package app.swapper.com.swapper.model
 
 import app.swapper.com.swapper.dto.Item
+import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.networking.RetrofitSingleton
 import app.swapper.com.swapper.presenter.CardsPresenter
 import app.swapper.com.swapper.view.CardsView
@@ -13,20 +14,24 @@ import retrofit2.Response
  */
 class CardPresenterImpl(var cardsView : CardsView) : CardsPresenter {
 
-    override fun performNetworkRequest(index : Int) {
-        val result = RetrofitSingleton.service.getNearestItems("tadas@gmail.com", 54.7, 23.5, index);
+    override fun performNetworkRequest(user: User?, index : Int) {
+        user?.let {
+            val result = RetrofitSingleton.service.getNearestItems(it.email, 54.7, 23.5, index);
 
-        result.enqueue(object : Callback<List<Item>> {
-            override fun onResponse(call: Call<List<Item>>?, response: Response<List<Item>>?) {
-                response.let {
-                    val list = response?.body();
-                    cardsView.cardsArrived(list)
+            result.enqueue(object : Callback<List<Item>> {
+                override fun onResponse(call: Call<List<Item>>?, response: Response<List<Item>>?) {
+                    response.let {
+                        val list = response?.body()
+                        list?.let {
+                            cardsView.cardsArrived(list)
+                        }
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<List<Item>>?, t: Throwable?) {
+                override fun onFailure(call: Call<List<Item>>?, t: Throwable?) {
 
-            }
-        })
+                }
+            })
+        }
     }
 }
