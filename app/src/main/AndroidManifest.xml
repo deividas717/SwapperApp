@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".SwaggerApp"
@@ -15,9 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -36,14 +38,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.CreateNewItemActivity" />
+        <activity
+            android:name=".activity.DetailItemActivity"
+            android:label="@string/title_activity_detail_item"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".activity.CreateNewItemActivity"/>
+        <service
+            android:name=".LocationService"
+            android:exported="false" />
 
+        <activity android:name=".activity.BaseActivity"></activity>
     </application>
 
 </manifest>

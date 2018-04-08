@@ -1,6 +1,7 @@
 package app.swapper.com.swapper.activity
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,7 @@ import java.util.*
 class LoginActivity : AppCompatActivity() {
 
     private var callbackManager: CallbackManager? = null
+    private lateinit var prefs : SharedPreferencesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +31,8 @@ class LoginActivity : AppCompatActivity() {
         FacebookSdk.sdkInitialize(this)
         callbackManager = CallbackManager.Factory.create()
         setContentView(R.layout.activity_login)
+
+        prefs = SharedPreferencesManager.getInstance(applicationContext)
 
         loginButton.setOnClickListener {
             LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email"))
@@ -62,8 +66,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity() {
-        if (AccessToken.getCurrentAccessToken() != null) {
-            startActivity(Intent(this, MainActivity::class.java));
+        if (AccessToken.getCurrentAccessToken() != null && prefs.getUser() != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         }
     }
 
@@ -82,10 +87,11 @@ class LoginActivity : AppCompatActivity() {
                 response.let {
                     response?.let {
                         if (it.isSuccessful) {
-                            val prefs = SharedPreferencesManager.getInstance(applicationContext)
                             prefs.saveUser(user)
 
                             startMainActivity()
+                        } else {
+                            AccessToken.setCurrentAccessToken(null)
                         }
                     }
                 }

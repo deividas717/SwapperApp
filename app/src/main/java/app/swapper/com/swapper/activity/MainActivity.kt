@@ -1,6 +1,9 @@
 package app.swapper.com.swapper.activity
 
+import android.Manifest
+import android.app.IntentService
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -8,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Gravity
 import android.view.MenuItem
+import app.swapper.com.swapper.LocationService
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.adapter.UserHorizontalGalleryAdapter
@@ -22,8 +26,12 @@ import com.facebook.AccessToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, UserItemsView {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener, UserItemsView {
 
     private lateinit var adapter : UserHorizontalGalleryAdapter
     private lateinit var userItemsPresenter: UserItemsPresenter
@@ -32,6 +40,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        startLocationService()
 
         val application = applicationContext as SwaggerApp
         user = application.getUser()
@@ -90,6 +100,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_send -> {
+                val prefs = SharedPreferencesManager.getInstance(applicationContext)
+                prefs.clearUser()
                 AccessToken.setCurrentAccessToken(null)
                 startActivity(Intent(this, LoginActivity::class.java));
             }
@@ -105,7 +117,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         userGalleryRecyclerView.adapter = adapter
     }
 
-    fun getUser() : User? {
-        return user
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    private fun hasLocationPermissions(): Boolean {
+        return EasyPermissions.hasPermissions(this,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    }
+
+    @AfterPermissionGranted(2)
+    private fun startLocationService() {
+        if (hasLocationPermissions()) {
+            startService(Intent(applicationContext, LocationService::class.java))
+        } else {
+            EasyPermissions.requestPermissions(
+                    this,
+                    "Because we need location",
+                    2,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        }
     }
 }

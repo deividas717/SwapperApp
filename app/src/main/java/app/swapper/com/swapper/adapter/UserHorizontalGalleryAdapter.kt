@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import app.swapper.com.swapper.Constants
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.dto.Item
 import com.bumptech.glide.Glide
+import java.io.File
 
 /**
  * Created by Deividas on 2018-04-07.
@@ -56,8 +58,12 @@ class UserHorizontalGalleryAdapter(private val context : Context, private val da
         }
 
         fun bind(item: Item, isSelected: Boolean) {
-            if (item.images?.isNotEmpty()!!) {
-                Glide.with(context).load("http://192.168.1.103:8080/api/image/" + item.images[0]).into(img)
+            item.images?.let {
+                if (it.isNotEmpty()) {
+                    Glide.with(context).load(Constants.serverAddress + "image" + File.separator + it[0]).into(img)
+                } else {
+                    Glide.with(context).load("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png").into(img)
+                }
             }
             if (isSelected) {
                 rootView.setBackgroundResource(R.drawable.shadow)

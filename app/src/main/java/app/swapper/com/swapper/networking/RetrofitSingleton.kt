@@ -1,5 +1,6 @@
 package app.swapper.com.swapper.networking
 
+import app.swapper.com.swapper.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,12 +12,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitSingleton private constructor() {
     companion object Factory {
         private var client = OkHttpClient.Builder()
-                .addInterceptor(AuthenticationInterceptor("deividas717@gmail.com", "deividas"))
+                //.addInterceptor(AuthenticationInterceptor("deividas717@gmail.com", "deividas"))
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build()
 
         private var retrofit = Retrofit.Builder()
-                .baseUrl("http://192.168.1.103:8080/api/")
+                .baseUrl(Constants.serverAddress)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

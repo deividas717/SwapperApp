@@ -1,5 +1,6 @@
 package app.swapper.com.swapper.model
 
+import android.location.Location
 import android.util.Log
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User

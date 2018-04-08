@@ -38,6 +38,14 @@ class SharedPreferencesManager private constructor(context: Context) {
         return User(name, img, email)
     }
 
+    fun clearUser() {
+        val editor = prefs.edit()
+        editor.remove(name)
+                .remove(picture)
+                .remove(email)
+                .apply()
+    }
+
     private fun isPropValid(value: String?) : Boolean {
         value?.let {
             if (it.isNotEmpty())  return true

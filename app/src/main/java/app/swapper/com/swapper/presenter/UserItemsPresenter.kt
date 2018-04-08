@@ -1,5 +1,6 @@
 package app.swapper.com.swapper.presenter
 
+import android.location.Location
 import app.swapper.com.swapper.dto.User
 
 /**

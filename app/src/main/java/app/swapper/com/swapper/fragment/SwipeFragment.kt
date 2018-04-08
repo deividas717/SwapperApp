@@ -1,21 +1,22 @@
 package app.swapper.com.swapper.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
+import android.support.v7.widget.CardView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import app.swapper.com.swapper.Constants
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.SwipeView
-import app.swapper.com.swapper.activity.MainActivity
+import app.swapper.com.swapper.activity.DetailItemActivity
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.model.CardPresenterImpl
 import app.swapper.com.swapper.presenter.CardsPresenter
-import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.view.CardsView
 import com.bumptech.glide.Glide
 import com.mindorks.placeholderview.SwipeDecor
@@ -23,6 +24,7 @@ import com.mindorks.placeholderview.SwipeViewBuilder
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.NonReusable
 import com.mindorks.placeholderview.annotations.Resolve
+import java.io.File
 
 /**
  * A simple [Fragment] subclass.
@@ -44,18 +46,20 @@ class SwipeFragment : Fragment(), CardsView {
                 .setDisplayViewCount(3)
                 .setSwipeDecor(SwipeDecor().setPaddingTop(20).setRelativeScale(0.01f))
 
-        val user = (activity as MainActivity).getUser()
+        val application = activity?.application as SwaggerApp
+        val user = application.getUser()
 
         cardsPresenter = CardPresenterImpl(this)
-        cardsPresenter.performNetworkRequest(user, index)
+        cardsPresenter.getMoreCards(user, index)
         swipeView.addItemRemoveListener { count ->
+            cardsPresenter.markCardAsAlreadySeen(user, dataList[currentItem].id)
             currentItem++
-            if (count < 5) cardsPresenter.performNetworkRequest(user, index)
+            if (count < 5) cardsPresenter.getMoreCards(user, index)
         }
 
         dataList = mutableListOf()
 
-        return view;
+        return view
     }
 
     override fun cardsArrived(list: List<Item>) {
@@ -68,12 +72,16 @@ class SwipeFragment : Fragment(), CardsView {
 
     fun getActiveCardId() : Long {
         if (dataList.size <= currentItem) return -1L
+
         return dataList[currentItem].id
     }
 
     @NonReusable
     @Layout(R.layout.card_layout)
     inner class CardPresenter(private var item: Item) {
+
+        @com.mindorks.placeholderview.annotations.View(R.id.card)
+        private var cardView: CardView? = null
         @com.mindorks.placeholderview.annotations.View(R.id.itemImg)
         private var itemImg: ImageView? = null
         @com.mindorks.placeholderview.annotations.View(R.id.itemName)
@@ -83,11 +91,27 @@ class SwipeFragment : Fragment(), CardsView {
 
         @Resolve
         private fun onResolved() {
-            if (item.images?.isNotEmpty()!!) {
-                itemImg?.let { Glide.with(context!!.applicationContext).load("http://192.168.1.103:8080/api/image/" + item.images?.get(0)).into(it) }
+            item.images?.let {
+                itemImg?.let {
+                    if (item.images!!.isNotEmpty()) {
+                        val url = Constants.serverAddress + "image" + File.separator + item.images?.get(0)
+                        Glide.with(activity?.applicationContext!!)
+                                .load(url)
+                                .into(it)
+                    } else {
+                        Glide.with(activity?.applicationContext!!).load("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png").into(it)
+                    }
+                }
             }
+
             itemName?.text = item.title
             itemDescription?.text = item.description
+
+            cardView?.setOnClickListener {
+                val intent = Intent(activity, DetailItemActivity::class.java)
+                intent.putExtra(DetailItemActivity.itemId, item.id)
+                startActivity(intent);
+            }
         }
     }
 }

@@ -11,12 +11,12 @@ import com.elvishew.xlog.XLog
  */
 class SwaggerApp : Application() {
 
-    private lateinit var prefs: SharedPreferencesManager;
+    private lateinit var prefs: SharedPreferencesManager
 
     override fun onCreate() {
         super.onCreate()
 
-        XLog.init(LogLevel.ALL);
+        XLog.init(LogLevel.ALL)
 
         prefs = SharedPreferencesManager.getInstance(applicationContext)
     }

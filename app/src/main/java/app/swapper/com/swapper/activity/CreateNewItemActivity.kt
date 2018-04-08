@@ -24,12 +24,12 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreateNewItemActivity : AppCompatActivity(), ItemCreationView {
+class CreateNewItemActivity : BaseActivity(), ItemCreationView {
 
     private val REQUEST_CAPTURE_IMAGE = 100
     private var imageFilePath: String? = null
     private lateinit var photosArray : MutableList<File>
-    lateinit var creationPresenter : CreationPresenter
+    private lateinit var creationPresenter : CreationPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +44,16 @@ class CreateNewItemActivity : AppCompatActivity(), ItemCreationView {
             val application = applicationContext as SwaggerApp
             val user = application.getUser()
             user?.let {
-                val item = Item(itemTitle.text.toString(), description.text.toString(), null,46465.8,455.8, it)
-                creationPresenter.sendItemDataToServer(item, photosArray)
+                location?.let {
+                    val item = Item(itemTitle.text.toString(),
+                            description.text.toString(),
+                            null,
+                            it.latitude,
+                            it.longitude,
+                            user
+                    )
+                    creationPresenter.sendItemDataToServer(item, photosArray)
+                }
             }
         }
     }

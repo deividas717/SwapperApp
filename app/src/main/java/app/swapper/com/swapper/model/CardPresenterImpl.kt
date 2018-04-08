@@ -14,7 +14,7 @@ import retrofit2.Response
  */
 class CardPresenterImpl(var cardsView : CardsView) : CardsPresenter {
 
-    override fun performNetworkRequest(user: User?, index : Int) {
+    override fun getMoreCards(user: User?, index : Int) {
         user?.let {
             val result = RetrofitSingleton.service.getNearestItems(it.email, 54.7, 23.5, index);
 
@@ -32,6 +32,13 @@ class CardPresenterImpl(var cardsView : CardsView) : CardsPresenter {
 
                 }
             })
+        }
+    }
+
+    // todo make request to server and mark item as seen
+    override fun markCardAsAlreadySeen(user: User?, itemId: Long) {
+        user?.let {
+
         }
     }
 }
