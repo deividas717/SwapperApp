@@ -1,13 +1,10 @@
-package app.swapper.com.swapper.activity
+package app.swapper.com.swapper.ui.activity
 
 import android.Manifest
-import android.app.IntentService
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Gravity
 import android.view.MenuItem
@@ -17,7 +14,7 @@ import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.adapter.UserHorizontalGalleryAdapter
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
-import app.swapper.com.swapper.fragment.SwipeFragment
+import app.swapper.com.swapper.ui.fragment.SwipeFragment
 import app.swapper.com.swapper.model.UserItemsPresenterImpl
 import app.swapper.com.swapper.presenter.UserItemsPresenter
 import app.swapper.com.swapper.storage.SharedPreferencesManager
@@ -26,8 +23,6 @@ import com.facebook.AccessToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -101,7 +96,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
             R.id.nav_send -> {
                 val prefs = SharedPreferencesManager.getInstance(applicationContext)
-                prefs.clearUser()
+                prefs.clearAllData()
                 AccessToken.setCurrentAccessToken(null)
                 startActivity(Intent(this, LoginActivity::class.java));
             }

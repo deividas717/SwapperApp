@@ -3,6 +3,7 @@ package app.swapper.com.swapper.storage
 import android.content.Context
 import android.content.SharedPreferences
 import app.swapper.com.swapper.SingletonHolder
+import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.User
 import com.elvishew.xlog.XLog
 
@@ -14,6 +15,9 @@ class SharedPreferencesManager private constructor(context: Context) {
     private val name = "name"
     private val picture = "picture"
     private val email = "email"
+
+    private val accessToken = "accessToken"
+    private val expiresIn = "expiresIn"
 
     private var prefs : SharedPreferences = context.getSharedPreferences("USER_INFO_PREFS", Context.MODE_PRIVATE)
 
@@ -32,13 +36,28 @@ class SharedPreferencesManager private constructor(context: Context) {
         val img = prefs.getString(picture, null)
         val email = prefs.getString(email, null)
 
-        XLog.st(5).d("User $name $img $email")
+       // XLog.st(5).d("User $name $img $email")
 
         if (!isPropValid(name) || !isPropValid(img) || !isPropValid(email)) return null
         return User(name, img, email)
     }
 
-    fun clearUser() {
+    fun saveAccessToken(accessTokenObj: AccessToken) {
+        val editor = prefs.edit()
+        val expiresInVal = accessTokenObj.expiresIn
+        editor.putString(accessToken, "Bearer ${accessTokenObj.accessToken}")
+                .putLong(expiresIn, expiresInVal)
+                .apply()
+    }
+
+    fun getAccessToken(): AccessToken? {
+        val accessToken = prefs.getString(accessToken, "")
+        val expiresIn = prefs.getLong(expiresIn, -1)
+
+        return AccessToken(accessToken, expiresIn)
+    }
+
+    fun clearAllData() {
         val editor = prefs.edit()
         editor.remove(name)
                 .remove(picture)

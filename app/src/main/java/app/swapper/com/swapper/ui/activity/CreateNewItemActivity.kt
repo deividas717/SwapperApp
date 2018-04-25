@@ -1,20 +1,20 @@
-package app.swapper.com.swapper.activity
+package app.swapper.com.swapper.ui.activity
 
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import android.location.Location
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
+import android.widget.Toast
+import app.swapper.com.swapper.CompressFile
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.dto.Item
-import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.model.CreationPresenterImpl
 import app.swapper.com.swapper.presenter.CreationPresenter
-import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.view.ItemCreationView
 import kotlinx.android.synthetic.main.activity_create_new_item.*
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -35,14 +35,20 @@ class CreateNewItemActivity : BaseActivity(), ItemCreationView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_new_item)
 
+        val application = application as SwaggerApp
+        val accessToken = application.getAccessToken()
+
         photosArray = mutableListOf()
-        creationPresenter = CreationPresenterImpl(this)
+        creationPresenter = CreationPresenterImpl(this, accessToken)
 
         takePhotoBtn.setOnClickListener { cameraTask() }
 
         send.setOnClickListener {
             val application = applicationContext as SwaggerApp
             val user = application.getUser()
+            location = Location("A")
+            location?.latitude = 15.565
+            location?.longitude = 54655.565
             user?.let {
                 location?.let {
                     val item = Item(itemTitle.text.toString(),
@@ -53,7 +59,11 @@ class CreateNewItemActivity : BaseActivity(), ItemCreationView {
                             user
                     )
                     creationPresenter.sendItemDataToServer(item, photosArray)
+                } ?: run {
+                    Toast.makeText(this, "GPS location is not found", Toast.LENGTH_SHORT).show()
                 }
+            } ?: run {
+                Toast.makeText(this, "Bad", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -116,7 +126,8 @@ class CreateNewItemActivity : BaseActivity(), ItemCreationView {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAPTURE_IMAGE) {
                 val file = File(imageFilePath)
-                photosArray.add(file)
+                val compressedFile = CompressFile.saveBitmapToFile(file)
+                photosArray.add(compressedFile)
             }
         }
     }

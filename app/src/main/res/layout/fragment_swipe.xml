@@ -1,11 +1,15 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="swipeViewModel"
+            type="app.swapper.com.swapper.ui.viewmodel.SwipeViewModel" />
+    </data>
 
     <app.swapper.com.swapper.SwipeView
         android:id="@+id/swipeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</FrameLayout>
+</layout>

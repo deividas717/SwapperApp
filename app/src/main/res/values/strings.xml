@@ -10,5 +10,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_detail_item">DetailItemActivity</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

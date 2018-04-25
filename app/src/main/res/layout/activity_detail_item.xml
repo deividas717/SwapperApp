@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.swapper.com.swapper.activity.DetailItemActivity">
+    tools:context="app.swapper.com.swapper.ui.activity.DetailItemActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

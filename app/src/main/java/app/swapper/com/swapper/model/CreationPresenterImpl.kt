@@ -2,6 +2,7 @@ package app.swapper.com.swapper.model
 
 import android.util.Log
 import android.webkit.MimeTypeMap
+import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.networking.RetrofitSingleton
 import app.swapper.com.swapper.presenter.CreationPresenter
@@ -18,7 +19,7 @@ import java.io.File
 /**
  * Created by Deividas on 2018-04-07.
  */
-class CreationPresenterImpl(var view : ItemCreationView) : CreationPresenter {
+class CreationPresenterImpl(var view : ItemCreationView, val accessToken: AccessToken?) : CreationPresenter {
 
     override fun sendItemDataToServer(item: Item, files: List<File>) {
         val call = RetrofitSingleton.service.createNewItem(item)

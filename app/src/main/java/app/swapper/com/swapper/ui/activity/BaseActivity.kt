@@ -1,8 +1,7 @@
-package app.swapper.com.swapper.activity
+package app.swapper.com.swapper.ui.activity
 
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import app.swapper.com.swapper.events.LocationChangeEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

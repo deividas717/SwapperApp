@@ -31,7 +31,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activity.LoginActivity">
+        <activity android:name=".ui.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,12 +39,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.CreateNewItemActivity" />
+        <activity android:name=".ui.activity.CreateNewItemActivity" />
         <activity
-            android:name=".activity.DetailItemActivity"
+            android:name=".ui.activity.DetailItemActivity"
             android:label="@string/title_activity_detail_item"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -52,7 +52,11 @@
             android:name=".LocationService"
             android:exported="false" />
 
-        <activity android:name=".activity.BaseActivity"></activity>
+        <activity android:name=".ui.activity.BaseActivity" />
+        <activity
+            android:name=".tester.TestActivity"
+            android:label="@string/title_activity_test"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

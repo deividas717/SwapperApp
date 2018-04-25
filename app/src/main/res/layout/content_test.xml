@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="app.swapper.com.swapper.ui.activity.DetailItemActivity"
-    tools:showIn="@layout/activity_detail_item">
+    tools:context="app.swapper.com.swapper.tester.TestActivity"
+    tools:showIn="@layout/activity_test">
 
 </android.support.constraint.ConstraintLayout>

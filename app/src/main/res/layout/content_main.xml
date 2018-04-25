@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/swipeFragment"
-        class="app.swapper.com.swapper.fragment.SwipeFragment"
+        class="app.swapper.com.swapper.ui.fragment.SwipeFragment"
         android:layout_weight="0.75"
         android:layout_width="match_parent"
         android:layout_height="0dp" />
@@ -20,7 +20,7 @@
         android:layout_height="0dp">
 
         <LinearLayout
-            android:background="#00cea8"
+            android:background="#00a74e"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -33,7 +33,7 @@
 
             <Button
                 android:id="@+id/sendBtn"
-                android:textColor="#848484"
+                android:textColor="#ffffff"
                 android:background="@drawable/ghost_btn"
                 android:layout_gravity="center_horizontal"
                 android:text="Siųsti"
