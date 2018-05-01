@@ -1,4 +1,4 @@
-package app.swapper.com.swapper
+package app.swapper.com.swapper.ui
 
 import android.content.Context
 import android.util.AttributeSet

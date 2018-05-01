@@ -1,4 +1,4 @@
-package app.swapper.com.swapper
+package app.swapper.com.swapper.utils
 
 /**
  * Created by Deividas on 2018-04-30.
@@ -20,8 +20,8 @@ object AppVisibilityDetector {
     private var sAppVisibilityCallback: AppVisibilityCallback? = null
     private var sIsForeground = false
     private var sHandler: Handler? = null
-    private val MSG_GOTO_FOREGROUND = 1
-    private val MSG_GOTO_BACKGROUND = 2
+    private const val MSG_GOTO_FOREGROUND = 1
+    private const val MSG_GOTO_BACKGROUND = 2
 
     fun init(app: Application, appVisibilityCallback: AppVisibilityCallback) {
         if (!checkIsMainProcess(app)) {

@@ -49,7 +49,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".LocationService"
+            android:name=".service.LocationService"
             android:exported="false" />
 
         <activity android:name=".ui.activity.BaseActivity" />

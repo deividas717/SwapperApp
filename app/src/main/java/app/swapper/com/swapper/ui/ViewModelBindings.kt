@@ -1,17 +1,13 @@
 package app.swapper.com.swapper.ui
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.databinding.BindingAdapter
-import android.databinding.ObservableArrayList
 import android.support.design.widget.FloatingActionButton
-import android.util.Log
 import android.widget.ImageView
-import app.swapper.com.swapper.Constants
+import app.swapper.com.swapper.utils.Constants
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.ui.viewmodel.RecyclerViewViewModel
-import com.bumptech.glide.Glide
 import java.io.File
 
 /**

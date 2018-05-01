@@ -13,7 +13,7 @@ import app.swapper.com.swapper.ui.factory.CreateNewItemViewModelFactory
 import app.swapper.com.swapper.LocationData
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
-import app.swapper.com.swapper.Utils
+import app.swapper.com.swapper.utils.Utils
 import app.swapper.com.swapper.databinding.ActivityCreateNewItemBinding
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
@@ -32,8 +32,6 @@ class CreateNewItemActivity : BaseActivity() {
 
     private lateinit var viewModel: CreateNewItemViewModel
     private var user: User? = null
-
-    private var isBound: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

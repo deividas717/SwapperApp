@@ -1,13 +1,11 @@
 package app.swapper.com.swapper.ui.viewmodel
 
 import android.arch.lifecycle.ViewModel
-import android.databinding.BaseObservable
 import android.util.Log
-import app.swapper.com.swapper.SingleLiveEvent
+import app.swapper.com.swapper.utils.SingleLiveEvent
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.networking.ApiService
-import app.swapper.com.swapper.ui.observableData.LoginStatus
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback

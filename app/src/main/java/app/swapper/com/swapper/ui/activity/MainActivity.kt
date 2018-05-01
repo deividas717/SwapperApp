@@ -9,7 +9,7 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.view.Gravity
 import android.view.MenuItem
-import app.swapper.com.swapper.LocationService
+import app.swapper.com.swapper.service.LocationService
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.databinding.ActivityMainBinding
@@ -54,8 +54,6 @@ class MainActivity : BaseActivity(),
                 drawer_layout.closeDrawer(Gravity.START)
             }
         }
-
-        //mainViewModel.requestForChangeSend.observe(this, android.arch.lifecycle.Observer { handleAdapterItemsState(it) })
 
         nav_view.setNavigationItemSelectedListener(this)
     }

@@ -5,7 +5,6 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,9 @@ import app.swapper.com.swapper.ui.activity.DetailItemActivity
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.events.LocationChangeEvent
 import app.swapper.com.swapper.networking.GlideLoader
+import app.swapper.com.swapper.ui.SwipeView
 import app.swapper.com.swapper.ui.viewmodel.SwipeViewModel
+import app.swapper.com.swapper.utils.Constants
 import com.bumptech.glide.Glide
 import com.mindorks.placeholderview.SwipeDecor
 import com.mindorks.placeholderview.SwipeViewBuilder

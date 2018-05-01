@@ -2,7 +2,7 @@ package app.swapper.com.swapper.ui.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.os.Bundle
-import app.swapper.com.swapper.SingleLiveEvent
+import app.swapper.com.swapper.utils.SingleLiveEvent
 import app.swapper.com.swapper.ui.observableData.LoginStatus
 import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.FbToken

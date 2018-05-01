@@ -1,4 +1,4 @@
-package app.swapper.com.swapper
+package app.swapper.com.swapper.utils
 
 /**
  * Created by Deividas on 2018-05-01.

@@ -3,22 +3,21 @@ package app.swapper.com.swapper
 import android.app.Application
 import android.content.Intent
 import android.text.TextUtils
-import android.util.Log
 import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.networking.ApiService
 import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.storage.SharedPreferencesManager
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import app.swapper.com.swapper.AppVisibilityDetector.AppVisibilityCallback
-
+import app.swapper.com.swapper.utils.AppVisibilityDetector.AppVisibilityCallback
+import app.swapper.com.swapper.service.LocationService
+import app.swapper.com.swapper.utils.AppVisibilityDetector
+import app.swapper.com.swapper.utils.Constants
 
 
 /**

@@ -1,4 +1,4 @@
-package app.swapper.com.swapper
+package app.swapper.com.swapper.utils
 
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData

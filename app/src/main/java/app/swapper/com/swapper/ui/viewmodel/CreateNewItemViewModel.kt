@@ -3,10 +3,9 @@ package app.swapper.com.swapper.ui.viewmodel
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import android.webkit.MimeTypeMap
-import app.swapper.com.swapper.CompressFile
-import app.swapper.com.swapper.SingleLiveEvent
+import app.swapper.com.swapper.utils.CompressFile
+import app.swapper.com.swapper.utils.SingleLiveEvent
 import app.swapper.com.swapper.dto.Item
-import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.networking.ApiService
 import okhttp3.MediaType
 import okhttp3.MultipartBody

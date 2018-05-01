@@ -1,14 +1,5 @@
 package app.swapper.com.swapper.networking
 
-import app.swapper.com.swapper.Constants
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import com.elvishew.xlog.XLog.addInterceptor
-
-
 
 /**
  * Created by Deividas on 2018-04-07.

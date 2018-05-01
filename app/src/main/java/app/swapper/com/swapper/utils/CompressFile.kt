@@ -1,11 +1,10 @@
-package app.swapper.com.swapper
+package app.swapper.com.swapper.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-
 
 /**
  * Created by Deividas on 2018-04-16.
@@ -43,7 +42,7 @@ object CompressFile {
         file.createNewFile()
         val outputStream = FileOutputStream(file)
 
-        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
 
         return file
     }

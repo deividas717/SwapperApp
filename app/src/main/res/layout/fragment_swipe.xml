@@ -7,7 +7,7 @@
             type="app.swapper.com.swapper.ui.viewmodel.SwipeViewModel" />
     </data>
 
-    <app.swapper.com.swapper.SwipeView
+    <app.swapper.com.swapper.ui.SwipeView
         android:id="@+id/swipeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

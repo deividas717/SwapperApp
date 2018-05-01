@@ -1,7 +1,6 @@
-package app.swapper.com.swapper
+package app.swapper.com.swapper.service
 
 import android.annotation.SuppressLint
-import android.app.IntentService
 import android.app.Service
 import android.content.Intent
 import android.os.Looper
@@ -14,6 +13,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import android.content.IntentSender
 import android.os.IBinder
 import android.util.Log
+import app.swapper.com.swapper.LocationData
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 
