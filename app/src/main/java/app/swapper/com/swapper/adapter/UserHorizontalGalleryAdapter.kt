@@ -1,6 +1,8 @@
 package app.swapper.com.swapper.adapter
 
 import android.databinding.DataBindingUtil
+import android.databinding.ObservableArrayList
+import android.databinding.ObservableList
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -17,8 +19,8 @@ class UserHorizontalGalleryAdapter
     private var inflater: LayoutInflater? = null
     private lateinit var binding: UserGalleryItemBinding
 
-    private var dataList: List<Item>? = null
-    private val selectedItems = mutableListOf<Int>()
+    private var data: List<Item>? = null
+    val selectedItems: ObservableList<Int> = ObservableArrayList<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder {
         if (inflater == null) {
@@ -29,7 +31,7 @@ class UserHorizontalGalleryAdapter
     }
 
     fun setDataList(data: List<Item>) {
-        dataList = data
+        this.data = data
         notifyDataSetChanged()
     }
 
@@ -39,14 +41,20 @@ class UserHorizontalGalleryAdapter
     }
 
     override fun onBindViewHolder(viewHolder: DataBindingViewHolder, position: Int) {
-        dataList?.let {
+        data?.let {
             viewHolder.viewBinding.userItem = it[position]
             viewHolder.viewBinding.executePendingBindings()
+
+            if (selectedItems.contains(position)) {
+                viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.shadow)
+            } else {
+                viewHolder.viewBinding.rootLayout.background = null
+            }
         }
     }
 
     override fun getItemCount(): Int {
-        dataList?.let {
+        data?.let {
             return it.size
         }
         return 0
@@ -61,7 +69,7 @@ class UserHorizontalGalleryAdapter
 
     fun getSelectedItemsIds() : List<Long> {
         val list = mutableListOf<Long>()
-        dataList?.let {
+        data?.let {
             val item = it
             selectedItems.forEach {
                 list.add(item[it].id)
@@ -98,7 +106,7 @@ class UserHorizontalGalleryAdapter
 
 
 
-//class UserHorizontalGalleryAdapter(private val context : Context, private val dataList: List<Item>)
+//class UserHorizontalGalleryAdapter(private val context : Context, private val data: List<Item>)
 //    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 //
 //    private val selectedItems = mutableListOf<Int>()
@@ -109,13 +117,13 @@ class UserHorizontalGalleryAdapter
 //    }
 //
 //    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-//        val data = dataList[position]
+//        val data = data[position]
 //        val listViewHolder = holder as ScanItemViewHolder
 //        listViewHolder.bind(data, selectedItems.contains(position))
 //    }
 //
 //    override fun getItemCount(): Int {
-//        return dataList.size
+//        return data.size
 //    }
 //
 //    inner class ScanItemViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -165,7 +173,7 @@ class UserHorizontalGalleryAdapter
 //    fun getSelectedItemsIds() : List<Long> {
 //        val list = mutableListOf<Long>()
 //        selectedItems.forEach {
-//            list.add(dataList[it].id)
+//            list.add(data[it].id)
 //        }
 //        return list
 //    }

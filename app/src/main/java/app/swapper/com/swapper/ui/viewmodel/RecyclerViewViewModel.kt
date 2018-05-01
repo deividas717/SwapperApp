@@ -11,7 +11,7 @@ import app.swapper.com.swapper.adapter.UserHorizontalGalleryAdapter
  */
 abstract class RecyclerViewViewModel: ViewModel() {
 
-    protected abstract fun getAdapter(): UserHorizontalGalleryAdapter
+    abstract fun getAdapter(): UserHorizontalGalleryAdapter
 
     fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.adapter = getAdapter()

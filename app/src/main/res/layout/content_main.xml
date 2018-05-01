@@ -1,6 +1,6 @@
-<layout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -8,30 +8,30 @@
             type="app.swapper.com.swapper.ui.viewmodel.UserItemViewModel" />
     </data>
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:background="@drawable/login_background"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/swipeFragment"
-            class="app.swapper.com.swapper.ui.fragment.SwipeFragment"
-            android:layout_weight="0.75"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp" />
+            android:layout_height="match_parent">
 
-        <android.support.v7.widget.CardView
-            app:cardElevation="20dp"
-            android:layout_weight=".25"
-            android:layout_width="match_parent"
-            android:layout_height="0dp">
-
-            <LinearLayout
-                android:background="#00a74e"
-                android:orientation="vertical"
+            <fragment
+                android:layout_weight=".83"
+                android:id="@+id/swipeFragment"
+                class="app.swapper.com.swapper.ui.fragment.SwipeFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="0dp" />
+
+            <android.support.v7.widget.CardView
+                android:layout_weight=".17"
+                android:id="@+id/cardView"
+                app:cardElevation="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
 
                 <android.support.v7.widget.RecyclerView
                     android:orientation="horizontal"
@@ -42,19 +42,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <Button
-                    android:id="@+id/sendBtn"
-                    android:textColor="#ffffff"
-                    android:background="@drawable/ghost_btn"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Siųsti"
-                    android:layout_width="130dp"
-                    android:layout_height="40dp" />
+            </android.support.v7.widget.CardView>
 
-            </LinearLayout>
+        </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+        <android.support.design.widget.FloatingActionButton
+            app:srcCompat="@drawable/ic_send"
+            android:layout_margin="15dp"
+            app:layout_anchor="@id/swipeFragment"
+            app:layout_anchorGravity="bottom|right|end"
+            app:fabVisibilityAnim="@{vm.getAdapter().selectedItems}"
+            android:id="@+id/sendBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </layout>

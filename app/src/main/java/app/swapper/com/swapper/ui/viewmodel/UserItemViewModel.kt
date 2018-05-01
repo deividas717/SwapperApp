@@ -43,22 +43,22 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
     }
 
     fun sendItemExchangeRequest(itemId: Long) {
+        if (itemId == -1L) return
+
         val selectedIds = adapter.getSelectedItemsIds()
         if (selectedIds.isNotEmpty()) {
-            if (itemId != -1L) {
-                val call = service?.markItem(itemId, selectedIds)
-                call?.enqueue(object : Callback<RequestBody> {
-                    override fun onResponse(call: Call<RequestBody>?, response: Response<RequestBody>?) {
-                        response?.let {
-                            if (it.isSuccessful) adapter.resetAllSelectableStates()
-                        }
+            val call = service?.markItem(itemId, selectedIds)
+            call?.enqueue(object : Callback<RequestBody> {
+                override fun onResponse(call: Call<RequestBody>?, response: Response<RequestBody>?) {
+                    response?.let {
+                        if (it.isSuccessful) adapter.resetAllSelectableStates()
                     }
+                }
 
-                    override fun onFailure(call: Call<RequestBody>?, t: Throwable?) {
-                        adapter.resetAllSelectableStates()
-                    }
-                })
-            }
+                override fun onFailure(call: Call<RequestBody>?, t: Throwable?) {
+                    adapter.resetAllSelectableStates()
+                }
+            })
         }
     }
 }

@@ -54,7 +54,7 @@ class SwipeViewModel(val user: User?, private val service: ApiService?) : ViewMo
     fun changeCurrentItemIndex(increase : Boolean) {
         if (increase) {
             //todo mark card as already seen
-            //            cardsPresenter.markCardAsAlreadySeen(user, dataList[currentItem].id)
+            //            cardsPresenter.markCardAsAlreadySeen(user, data[currentItem].id)
             currentItem = currentItem.plus(1)
         } else {
             if (currentItem > 0) {
