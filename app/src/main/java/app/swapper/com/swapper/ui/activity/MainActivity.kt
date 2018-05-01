@@ -1,60 +1,50 @@
 package app.swapper.com.swapper.ui.activity
 
 import android.Manifest
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.support.v7.widget.LinearLayoutManager
 import android.view.Gravity
 import android.view.MenuItem
 import app.swapper.com.swapper.LocationService
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
-import app.swapper.com.swapper.adapter.UserHorizontalGalleryAdapter
-import app.swapper.com.swapper.dto.Item
-import app.swapper.com.swapper.dto.User
-import app.swapper.com.swapper.ui.fragment.SwipeFragment
-import app.swapper.com.swapper.model.UserItemsPresenterImpl
-import app.swapper.com.swapper.presenter.UserItemsPresenter
+import app.swapper.com.swapper.databinding.ActivityMainBinding
 import app.swapper.com.swapper.storage.SharedPreferencesManager
-import app.swapper.com.swapper.view.UserItemsView
+import app.swapper.com.swapper.ui.factory.UserItemViewModelFactory
+import app.swapper.com.swapper.ui.fragment.SwipeFragment
+import app.swapper.com.swapper.ui.viewmodel.UserItemViewModel
 import com.facebook.AccessToken
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.EasyPermissions
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener, UserItemsView {
+class MainActivity : BaseActivity(),
+        NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var adapter : UserHorizontalGalleryAdapter
-    private lateinit var userItemsPresenter: UserItemsPresenter
-    private var user: User? = null
+    private lateinit var userViewModel: UserItemViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        startLocationService()
+        requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 
-        val application = applicationContext as SwaggerApp
-        user = application.getUser()
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val swaggerApp = (application as SwaggerApp)
+        val apiService = swaggerApp.getRetrofit()
+        val user = swaggerApp.getUser()
 
-        userItemsPresenter = UserItemsPresenterImpl(this)
-        userItemsPresenter.askServerForUserItems(user)
+        userViewModel = ViewModelProviders.of(this, UserItemViewModelFactory(apiService, user)).get(UserItemViewModel::class.java)
+        userViewModel.askServerForUserItems()
+        binding.vm = userViewModel
 
         val swipeFragment = supportFragmentManager.findFragmentById(R.id.swipeFragment) as SwipeFragment
 
         sendBtn.setOnClickListener {
-            val selectedIds = adapter.getSelectedItemsIds()
-            if (selectedIds.isNotEmpty()) {
-                val activeCardId = swipeFragment.getActiveCardId()
-                if (activeCardId != -1L) {
-                    userItemsPresenter.sendItemExchangeRequest(activeCardId, selectedIds)
-                    adapter.resetAllSelectableStates()
-                }
-            }
+            val activeCardId = swipeFragment.getActiveCardId()
+            userViewModel.sendItemExchangeRequest(activeCardId)
         }
 
         menuToggle.setOnClickListener {
@@ -64,6 +54,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 drawer_layout.closeDrawer(Gravity.START)
             }
         }
+
+        //mainViewModel.requestForChangeSend.observe(this, android.arch.lifecycle.Observer { handleAdapterItemsState(it) })
 
         nav_view.setNavigationItemSelectedListener(this)
     }
@@ -106,37 +98,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    override fun itemsLoaded(list: List<Item>) {
-        adapter = UserHorizontalGalleryAdapter(applicationContext, list)
-        userGalleryRecyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        userGalleryRecyclerView.adapter = adapter
+    override fun onPermissionGranted(grantedPermissions: Collection<String>) {
+        if (Manifest.permission.ACCESS_FINE_LOCATION in grantedPermissions) {
+            startService(Intent(this, LocationService::class.java))
+        }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onPermissionDenied(deniedPermissions: Collection<String>) {
+        if (Manifest.permission.ACCESS_FINE_LOCATION in deniedPermissions) {
 
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-    private fun hasLocationPermissions(): Boolean {
-        return EasyPermissions.hasPermissions(this,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    }
-
-    @AfterPermissionGranted(2)
-    private fun startLocationService() {
-        if (hasLocationPermissions()) {
-            startService(Intent(applicationContext, LocationService::class.java))
-        } else {
-            EasyPermissions.requestPermissions(
-                    this,
-                    "Because we need location",
-                    2,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-            )
         }
     }
 }

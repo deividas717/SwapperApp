@@ -2,93 +2,71 @@ package app.swapper.com.swapper.ui.activity
 
 import android.Manifest
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.location.Location
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
-import android.widget.Toast
-import app.swapper.com.swapper.CompressFile
+import app.swapper.com.swapper.ui.factory.CreateNewItemViewModelFactory
+import app.swapper.com.swapper.LocationData
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.Utils
+import app.swapper.com.swapper.databinding.ActivityCreateNewItemBinding
 import app.swapper.com.swapper.dto.Item
-import app.swapper.com.swapper.model.CreationPresenterImpl
-import app.swapper.com.swapper.presenter.CreationPresenter
-import app.swapper.com.swapper.view.ItemCreationView
+import app.swapper.com.swapper.dto.User
+import app.swapper.com.swapper.ui.viewmodel.CreateNewItemViewModel
 import kotlinx.android.synthetic.main.activity_create_new_item.*
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreateNewItemActivity : BaseActivity(), ItemCreationView {
+class CreateNewItemActivity : BaseActivity() {
 
     private val REQUEST_CAPTURE_IMAGE = 100
     private var imageFilePath: String? = null
     private lateinit var photosArray : MutableList<File>
-    private lateinit var creationPresenter : CreationPresenter
+
+    private lateinit var viewModel: CreateNewItemViewModel
+    private var user: User? = null
+
+    private var isBound: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_new_item)
 
-        val application = application as SwaggerApp
-        val accessToken = application.getAccessToken()
+        val swaggerApp = application as SwaggerApp
+        val apiService = swaggerApp.getRetrofit()
+        user = swaggerApp.getUser()
+
+        viewModel = ViewModelProviders.of(this, CreateNewItemViewModelFactory(apiService)).get(CreateNewItemViewModel::class.java)
+        viewModel.isItemCreated.observe(this, android.arch.lifecycle.Observer { it?.let { if (it) finish() } })
+
+        val binding: ActivityCreateNewItemBinding = DataBindingUtil.setContentView(this, R.layout.activity_create_new_item)
+        binding.createItemViewModel = viewModel
 
         photosArray = mutableListOf()
-        creationPresenter = CreationPresenterImpl(this, accessToken)
 
-        takePhotoBtn.setOnClickListener { cameraTask() }
+        takePhotoBtn.setOnClickListener {
+            requestPermission(Manifest.permission.CAMERA)
+        }
 
         send.setOnClickListener {
-            val application = applicationContext as SwaggerApp
-            val user = application.getUser()
-            location = Location("A")
-            location?.latitude = 15.565
-            location?.longitude = 54655.565
-            user?.let {
-                location?.let {
+            Utils.ifNotNull(LocationData.location, user) { location, user ->
+                run {
                     val item = Item(itemTitle.text.toString(),
                             description.text.toString(),
                             null,
-                            it.latitude,
-                            it.longitude,
+                            location.latitude,
+                            location.longitude,
                             user
                     )
-                    creationPresenter.sendItemDataToServer(item, photosArray)
-                } ?: run {
-                    Toast.makeText(this, "GPS location is not found", Toast.LENGTH_SHORT).show()
+                    viewModel.sendItemDataToServer(item)
                 }
-            } ?: run {
-                Toast.makeText(this, "Bad", Toast.LENGTH_SHORT).show()
             }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-    private fun hasCameraPermission(): Boolean {
-        return EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)
-    }
-
-    @AfterPermissionGranted(2)
-    private fun cameraTask() {
-        if (hasCameraPermission()) {
-            openCameraIntent()
-        } else {
-            // Ask for one permission
-            EasyPermissions.requestPermissions(
-                    this,
-                    "Because we need camera",
-                    2,
-                    Manifest.permission.CAMERA)
         }
     }
 
@@ -106,29 +84,32 @@ class CreateNewItemActivity : BaseActivity(), ItemCreationView {
         return image
     }
 
-    private fun openCameraIntent() {
-        val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (pictureIntent.resolveActivity(packageManager) != null){
-            val photoFile = createImageFile()
-            val photoURI = FileProvider.getUriForFile(this, application.packageName + ".provider", photoFile)
-            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-            startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE)
-        }
-    }
-
-    override fun itemCreated() {
-        finish()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAPTURE_IMAGE) {
                 val file = File(imageFilePath)
-                val compressedFile = CompressFile.saveBitmapToFile(file)
-                photosArray.add(compressedFile)
+                viewModel.addToCompressedImageArray(file)
             }
+        }
+    }
+
+    override fun onPermissionGranted(grantedPermissions: Collection<String>) {
+        if (Manifest.permission.CAMERA in grantedPermissions) {
+            val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            if (pictureIntent.resolveActivity(packageManager) != null) {
+                val photoFile = createImageFile()
+                val photoURI = FileProvider.getUriForFile(this, application.packageName + ".provider", photoFile)
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE)
+            }
+        }
+    }
+
+    override fun onPermissionDenied(deniedPermissions: Collection<String>) {
+        if (Manifest.permission.CAMERA in deniedPermissions) {
+
         }
     }
 }

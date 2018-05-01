@@ -2,76 +2,96 @@ package app.swapper.com.swapper
 
 import android.annotation.SuppressLint
 import android.app.IntentService
+import android.app.Service
 import android.content.Intent
-import android.location.Location
-import android.os.Bundle
+import android.os.Looper
 import app.swapper.com.swapper.events.LocationChangeEvent
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import org.greenrobot.eventbus.EventBus
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsStatusCodes
+import android.content.IntentSender
+import android.os.IBinder
+import android.util.Log
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.ResolvableApiException
 
+class LocationService : Service() {
+    override fun onBind(p0: Intent?): IBinder? {
+        return null
+    }
 
-class LocationService : IntentService("LocationService"),
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
-
-    private lateinit var googleApiClient: GoogleApiClient
     private lateinit var locationRequest: LocationRequest
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
 
+    @SuppressLint("MissingPermission")
     override fun onCreate() {
         super.onCreate()
 
-        googleApiClient = GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build()
-
         locationRequest = LocationRequest.create()
-        locationRequest.interval = 10000
-        locationRequest.fastestInterval = 5000
+        locationRequest.interval = 60000
+        locationRequest.fastestInterval = 50000
         locationRequest.priority = LocationRequest.PRIORITY_LOW_POWER
 
-        googleApiClient.connect()
-    }
-
-    // permission is granted before this service is init
-    @SuppressLint("MissingPermission")
-    override fun onConnected(p0: Bundle?) {
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                googleApiClient,
-                locationRequest,
-                this
-        )
-    }
-
-    override fun onConnectionSuspended(p0: Int) {
-
-    }
-
-    override fun onConnectionFailed(p0: ConnectionResult) {
-
-    }
-
-    override fun onLocationChanged(location: Location?) {
-        location?.let {
-            EventBus.getDefault().post(LocationChangeEvent(location))
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                super.onLocationResult(locationResult)
+                locationResult?.lastLocation?.let {
+                    LocationData.location = it
+                    EventBus.getDefault().post(LocationChangeEvent(it))
+                    Log.d("ASDGUIASDS", "lastLocation");
+                }
+            }
         }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            it?.let {
+                LocationData.location = it
+                EventBus.getDefault().post(LocationChangeEvent(it))
+                Log.d("ASDGUIASDS", "location");
+            }
+        }
+
     }
 
-    override fun onHandleIntent(intent: Intent?) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        builder.setAlwaysShow(true)
+        val result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
+        result.addOnCompleteListener {
+            try {
+                val locationServiceResponse = it.getResult(ApiException::class.java)
+                Log.d("ASDGUIASDS", "ok");
+            } catch (exception : ApiException) {
+                when (exception.statusCode) {
+                    LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                        try {
+                            val resolvable = exception as ResolvableApiException
+                            EventBus.getDefault().post(resolvable)
+                        } catch (e : IntentSender.SendIntentException) {
+                            Log.d("ASDGUIASDS", "bad1");
+                        } catch (e : ClassCastException) {
+                            Log.d("ASDGUIASDS", "bad2");
+                        }
+                    }
+                    LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
 
+                    }
+                }
+            }
+        }
+        return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        if (googleApiClient.isConnected) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this)
-            googleApiClient.disconnect()
-        }
+        Log.d("ASDGUIASDS", "onDestroy");
+
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }

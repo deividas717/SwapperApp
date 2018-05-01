@@ -12,9 +12,9 @@ import com.bumptech.glide.load.model.LazyHeaders
  */
 
 object GlideLoader {
-    lateinit var accessToken : String
+    var accessToken : String? = null
 
-    fun load(context: Context?, view: ImageView, url: String) {
+    fun loadFromApi(context: Context?, view: ImageView, url: String) {
         context?.let {
             val glideUrl = GlideUrl(url, LazyHeaders.Builder().addHeader("Authorization", accessToken).build())
             Glide.with(it).load(glideUrl).into(view)

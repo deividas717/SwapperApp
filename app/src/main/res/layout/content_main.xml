@@ -1,47 +1,60 @@
-<LinearLayout
-    android:background="@drawable/login_background"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <fragment
-        android:id="@+id/swipeFragment"
-        class="app.swapper.com.swapper.ui.fragment.SwipeFragment"
-        android:layout_weight="0.75"
+    <data>
+        <variable
+            name="vm"
+            type="app.swapper.com.swapper.ui.viewmodel.UserItemViewModel" />
+    </data>
+
+    <LinearLayout
+        android:background="@drawable/login_background"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
-        app:cardElevation="20dp"
-        android:layout_weight=".25"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
-
-        <LinearLayout
-            android:background="#00a74e"
-            android:orientation="vertical"
+        <fragment
+            android:id="@+id/swipeFragment"
+            class="app.swapper.com.swapper.ui.fragment.SwipeFragment"
+            android:layout_weight="0.75"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp" />
 
-            <android.support.v7.widget.RecyclerView
-                android:scrollbars="horizontal"
-                android:id="@+id/userGalleryRecyclerView"
+        <android.support.v7.widget.CardView
+            app:cardElevation="20dp"
+            android:layout_weight=".25"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <LinearLayout
+                android:background="#00a74e"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/sendBtn"
-                android:textColor="#ffffff"
-                android:background="@drawable/ghost_btn"
-                android:layout_gravity="center_horizontal"
-                android:text="Siųsti"
-                android:layout_width="130dp"
-                android:layout_height="40dp" />
+                <android.support.v7.widget.RecyclerView
+                    android:orientation="horizontal"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:recyclerViewViewModel="@{vm}"
+                    android:scrollbars="horizontal"
+                    android:id="@+id/userGalleryRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/sendBtn"
+                    android:textColor="#ffffff"
+                    android:background="@drawable/ghost_btn"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Siųsti"
+                    android:layout_width="130dp"
+                    android:layout_height="40dp" />
 
-    </android.support.v7.widget.CardView>
+            </LinearLayout>
 
-</LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</layout>

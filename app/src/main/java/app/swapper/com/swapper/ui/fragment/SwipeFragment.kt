@@ -15,14 +15,18 @@ import app.swapper.com.swapper.*
 import app.swapper.com.swapper.databinding.FragmentSwipeBinding
 import app.swapper.com.swapper.ui.activity.DetailItemActivity
 import app.swapper.com.swapper.dto.Item
+import app.swapper.com.swapper.events.LocationChangeEvent
 import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.ui.viewmodel.SwipeViewModel
+import com.bumptech.glide.Glide
 import com.mindorks.placeholderview.SwipeDecor
 import com.mindorks.placeholderview.SwipeViewBuilder
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.NonReusable
 import com.mindorks.placeholderview.annotations.Resolve
 import de.hdodenhof.circleimageview.CircleImageView
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.io.File
 
 /**
@@ -38,7 +42,7 @@ class SwipeFragment : Fragment() {
 
         val application = activity?.application as SwaggerApp
 
-        swipeViewModel = SwipeViewModel(application.getUser())
+        swipeViewModel = SwipeViewModel(application.getUser(), application.getRetrofit())
         binding.swipeViewModel = swipeViewModel
 
         swipeView = binding.root.findViewById(R.id.swipeView);
@@ -48,7 +52,6 @@ class SwipeFragment : Fragment() {
 
         swipeViewModel.data.observe(this, android.arch.lifecycle.Observer { handleData(it) })
 
-        swipeViewModel.getMoreCards()
         swipeView.addItemRemoveListener { count ->
             swipeViewModel.changeCurrentItemIndex(true)
             if (count < 5) swipeViewModel.getMoreCards()
@@ -58,26 +61,39 @@ class SwipeFragment : Fragment() {
     }
 
     private fun handleData(data: List<Item>?) {
-        Log.d("ASDAGSUDSDD", "handleData")
         data?.forEach {
             swipeView.addView(CardPresenter(it))
         }
         swipeViewModel.increaseIndex()
-            //                swipeView.addView(CardPresenter(it))
-//            }
-//        data?.let {
-//            if (it.failure) {
-//                return
-//            }
-//            it.data.forEach {
-//                swipeView.addView(CardPresenter(it))
-//            }
-//            swipeViewModel.increaseIndex()
-//        }
     }
 
     fun getActiveCardId() : Long {
         return swipeViewModel.getActiveCardId()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
+
+        LocationData.location?.let {
+            swipeViewModel.changeLocation(it)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+    }
+
+    @Subscribe
+    fun onLocationChanged(obj: LocationChangeEvent) {
+        swipeViewModel.changeLocation(obj.location)
     }
 
     @NonReusable
@@ -87,27 +103,21 @@ class SwipeFragment : Fragment() {
         @com.mindorks.placeholderview.annotations.View(R.id.card)
         private var cardView: CardView? = null
         @com.mindorks.placeholderview.annotations.View(R.id.itemImg)
-        private var itemImg: ImageView? = null
+        private lateinit var itemImg: ImageView
         @com.mindorks.placeholderview.annotations.View(R.id.itemName)
         private var itemName: TextView? = null
         @com.mindorks.placeholderview.annotations.View(R.id.itemDescription)
         private var itemDescription: TextView? = null
         @com.mindorks.placeholderview.annotations.View(R.id.profileImg)
-        private var profileImg: CircleImageView? = null
+        private lateinit var profileImg: CircleImageView
 
         @Resolve
         private fun onResolved() {
+            Glide.with(this@SwipeFragment).load(item.user.img).into(profileImg)
             item.images?.let {
-                itemImg?.let {
-                    if (item.images!!.isNotEmpty()) {
-                        val url = Constants.serverAddress + "api/image" + File.separator + item.images?.get(0)
-                        GlideLoader.load(activity, it, url)
-//                        Glide.with(activity?.applicationContext!!)
-//                                .load(url)
-//                                .into(it)
-                    } else {
-                        //Glide.with(activity?.applicationContext!!).load("https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1024px-No_image_3x4.svg.png").into(it)
-                    }
+                if (it.isNotEmpty()) {
+                    val url = Constants.serverAddress + "api/image" + File.separator + item.images?.get(0)
+                    GlideLoader.loadFromApi(activity, itemImg, url)
                 }
             }
 

@@ -50,11 +50,16 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     implementation 'com.asksira.android:cameraviewplus:0.7.0'
-    implementation 'pub.devrel:easypermissions:1.2.0'
     implementation 'com.facebook.android:facebook-login:[4,5)'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.elvishew:xlog:1.4.0'
     implementation 'com.google.android.gms:play-services-location:12.0.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+    kapt 'com.github.bumptech.glide:compiler:4.6.1'
     kapt 'com.android.databinding:compiler:2.3.1'
+    kapt 'com.github.bumptech.glide:compiler:4.7.1'
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+    implementation "android.arch.lifecycle:viewmodel:1.1.1"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'com.markodevcic.peko:peko:0.3'
+
 }

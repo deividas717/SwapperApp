@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import app.swapper.com.swapper.R
+import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.ui.observableData.LoginStatus
 import app.swapper.com.swapper.ui.viewmodel.LoginViewModel
 import app.swapper.com.swapper.databinding.ActivityLoginBinding
@@ -27,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
         FacebookSdk.sdkInitialize(this)
         callbackManager = CallbackManager.Factory.create()
 
-        loginViewModel = LoginViewModel(SharedPreferencesManager.getInstance(applicationContext))
+        loginViewModel = LoginViewModel(SharedPreferencesManager.getInstance(applicationContext), (application as SwaggerApp).getRetrofit())
         val binding: ActivityLoginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.loginViewModel = loginViewModel
 

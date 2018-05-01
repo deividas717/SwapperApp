@@ -7,6 +7,13 @@ import app.swapper.com.swapper.R
 import kotlinx.android.synthetic.main.activity_detail_item.*
 
 class DetailItemActivity : BaseActivity() {
+    override fun onPermissionGranted(grantedPermissions: Collection<String>) {
+
+    }
+
+    override fun onPermissionDenied(deniedPermissions: Collection<String>) {
+
+    }
 
     companion object {
         const val itemId = "itemId"

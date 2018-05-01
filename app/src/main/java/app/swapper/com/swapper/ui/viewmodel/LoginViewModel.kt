@@ -7,7 +7,8 @@ import app.swapper.com.swapper.ui.observableData.LoginStatus
 import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.FbToken
 import app.swapper.com.swapper.dto.User
-import app.swapper.com.swapper.networking.RetrofitSingleton
+import app.swapper.com.swapper.networking.ApiService
+import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import com.facebook.GraphRequest
 import com.facebook.login.LoginResult
@@ -20,7 +21,7 @@ import retrofit2.Response
  * Created by Deividas on 2018-04-23.
  */
 
-class LoginViewModel(private val prefs: SharedPreferencesManager) : ViewModel() {
+class LoginViewModel(private val prefs: SharedPreferencesManager, private val apiService: ApiService?) : ViewModel() {
 
     val status = SingleLiveEvent<LoginStatus>()
 
@@ -36,8 +37,8 @@ class LoginViewModel(private val prefs: SharedPreferencesManager) : ViewModel() 
     }
 
     private fun getAccessToken(fbToken: FbToken, jsonObj: JSONObject) {
-        val result = RetrofitSingleton.service.createUser(fbToken)
-        result.enqueue(object : Callback<AccessToken> {
+        val result = apiService?.createUser(fbToken)
+        result?.enqueue(object : Callback<AccessToken> {
             override fun onResponse(call: Call<AccessToken>?, response: Response<AccessToken>?) {
                 response?.let {
                     if (it.isSuccessful) {
@@ -67,6 +68,8 @@ class LoginViewModel(private val prefs: SharedPreferencesManager) : ViewModel() 
         val user = User(name, photoUrl, email)
         prefs.saveUser(user)
         prefs.saveAccessToken(accessToken)
+
+        GlideLoader.accessToken = accessToken.accessToken
 
         status.value = LoginStatus.SUCCESS
     }

@@ -1,17 +1,7 @@
 package app.swapper.com.swapper
 
-import android.content.Context
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
 import android.graphics.Bitmap
-import java.nio.file.Files.delete
-import java.nio.file.Files.exists
-import android.system.Os.mkdir
-import android.os.Environment.getExternalStorageDirectory
-import android.media.ExifInterface
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.os.Environment
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
