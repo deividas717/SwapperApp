@@ -16,7 +16,7 @@ import android.util.Log
 
 object AppVisibilityDetector {
     private val DEBUG = false
-    private val TAG = "AppVisibilityDetector"
+    private const val TAG = "AppVisibilityDetector"
     private var sAppVisibilityCallback: AppVisibilityCallback? = null
     private var sIsForeground = false
     private var sHandler: Handler? = null

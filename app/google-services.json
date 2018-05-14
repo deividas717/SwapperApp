@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "45144372791",
+    "firebase_url": "https://swapper-bcb47.firebaseio.com",
+    "project_id": "swapper-bcb47",
+    "storage_bucket": "swapper-bcb47.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45144372791:android:cef18d4c5aafd416",
+        "android_client_info": {
+          "package_name": "app.swapper.com.swapper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45144372791-a5aetfkqo36qsnu7ji6ljm2b72g8bk5m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8YtX-DwBLllHCVMKMVAy9k8Rgp-N71lg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

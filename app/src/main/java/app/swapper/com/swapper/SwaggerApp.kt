@@ -18,6 +18,7 @@ import app.swapper.com.swapper.utils.AppVisibilityDetector.AppVisibilityCallback
 import app.swapper.com.swapper.service.LocationService
 import app.swapper.com.swapper.utils.AppVisibilityDetector
 import app.swapper.com.swapper.utils.Constants
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 /**
@@ -35,6 +36,12 @@ class SwaggerApp : Application() {
         XLog.init(LogLevel.ALL)
 
         prefs = SharedPreferencesManager.getInstance(applicationContext)
+
+        val user = prefs.getUser()
+
+        if (user != null) {
+            FirebaseMessaging.getInstance().subscribeToTopic(user.userId.toString())
+        }
 
         GlideLoader.accessToken = getAccessToken()?.accessToken
 

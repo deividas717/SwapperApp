@@ -27,7 +27,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp">
 
-            <android.support.v7.widget.AppCompatImageView
+            <app.swapper.com.swapper.utils.SquareImageView
                 app:loadImage="@{userItem}"
                 android:scaleType="fitXY"
                 android:id="@+id/userGalleryImg"

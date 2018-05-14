@@ -2,6 +2,7 @@ package app.swapper.com.swapper.ui.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.os.Bundle
+import android.util.Log
 import app.swapper.com.swapper.utils.SingleLiveEvent
 import app.swapper.com.swapper.ui.observableData.LoginStatus
 import app.swapper.com.swapper.dto.AccessToken
@@ -12,6 +13,7 @@ import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import com.facebook.GraphRequest
 import com.facebook.login.LoginResult
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,7 +39,7 @@ class LoginViewModel(private val prefs: SharedPreferencesManager, private val ap
     }
 
     private fun getAccessToken(fbToken: FbToken, jsonObj: JSONObject) {
-        val result = apiService?.createUser(fbToken)
+        val result = apiService?.loginOrRegister(fbToken)
         result?.enqueue(object : Callback<AccessToken> {
             override fun onResponse(call: Call<AccessToken>?, response: Response<AccessToken>?) {
                 response?.let {
@@ -59,15 +61,17 @@ class LoginViewModel(private val prefs: SharedPreferencesManager, private val ap
     }
 
     private fun saveData(accessToken: app.swapper.com.swapper.dto.AccessToken, jsonObj: JSONObject) {
-        val userId = jsonObj.getString("id")
-
+        val serveUserId = accessToken.userId
+        val fbUserId = jsonObj.getString("id")
         val name = jsonObj.getString("name")
         val email = jsonObj.getString("email")
-        val photoUrl = "https://graph.facebook.com/$userId/picture?type=large"
+        val photoUrl = "https://graph.facebook.com/$fbUserId/picture?type=large"
 
-        val user = User(name, photoUrl, email)
+        val user = User(serveUserId, name, photoUrl, email)
         prefs.saveUser(user)
         prefs.saveAccessToken(accessToken)
+
+        FirebaseMessaging.getInstance().subscribeToTopic(serveUserId.toString())
 
         GlideLoader.accessToken = accessToken.accessToken
 

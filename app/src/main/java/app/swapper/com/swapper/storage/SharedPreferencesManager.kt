@@ -15,6 +15,7 @@ class SharedPreferencesManager private constructor(context: Context) {
     private val name = "name"
     private val picture = "picture"
     private val email = "email"
+    private val userId = "userId"
 
     private val accessToken = "accessToken"
     private val expiresIn = "expiresIn"
@@ -32,14 +33,13 @@ class SharedPreferencesManager private constructor(context: Context) {
     }
 
     fun getUser() : User? {
+        val userId = prefs.getLong(userId, -1L)
         val name = prefs.getString(name, null)
         val img = prefs.getString(picture, null)
         val email = prefs.getString(email, null)
 
-       // XLog.st(5).d("User $name $img $email")
-
-        if (!isPropValid(name) || !isPropValid(img) || !isPropValid(email)) return null
-        return User(name, img, email)
+        if (userId != -1L && !isPropValid(name) || !isPropValid(img) || !isPropValid(email)) return null
+        return User(userId, name, img, email)
     }
 
     fun saveAccessToken(accessTokenObj: AccessToken) {
@@ -51,10 +51,11 @@ class SharedPreferencesManager private constructor(context: Context) {
     }
 
     fun getAccessToken(): AccessToken? {
+        val userId = prefs.getLong(userId, -1L)
         val accessToken = prefs.getString(accessToken, "")
         val expiresIn = prefs.getLong(expiresIn, -1)
 
-        return AccessToken(accessToken, expiresIn)
+        return AccessToken(accessToken, expiresIn, userId)
     }
 
     fun clearAllData() {

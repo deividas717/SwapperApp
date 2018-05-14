@@ -3,6 +3,7 @@ package app.swapper.com.swapper.ui.activity
 import android.Manifest
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -36,6 +37,10 @@ class CreateNewItemActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (intent.getBooleanExtra("displayBackBtn", false)) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        }
+
         val swaggerApp = application as SwaggerApp
         val apiService = swaggerApp.getRetrofit()
         user = swaggerApp.getUser()
@@ -66,6 +71,11 @@ class CreateNewItemActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return super.onSupportNavigateUp()
     }
 
     @Throws(IOException::class)
@@ -108,6 +118,14 @@ class CreateNewItemActivity : BaseActivity() {
     override fun onPermissionDenied(deniedPermissions: Collection<String>) {
         if (Manifest.permission.CAMERA in deniedPermissions) {
 
+        }
+    }
+
+    companion object {
+        fun newIntent(context: Context, displayBackBtn: Boolean = false): Intent {
+            val intent = Intent(context, CreateNewItemActivity::class.java)
+            intent.putExtra("displayBackBtn", displayBackBtn)
+            return intent
         }
     }
 }
