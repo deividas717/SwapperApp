@@ -126,9 +126,7 @@ class SwipeFragment : Fragment() {
             itemDescription?.text = item.description
 
             cardView?.setOnClickListener {
-                val intent = Intent(activity, DetailItemActivity::class.java)
-                intent.putExtra(DetailItemActivity.itemId, item.id)
-                startActivity(intent);
+                startActivity(DetailItemActivity.createNewIntent(activity, item.id))
             }
         }
     }

@@ -38,4 +38,7 @@ interface ApiService {
     @POST("api/markItem/{itemId}")
     fun markItem(@Path("itemId") itemId : Long,
                  @Body numbers : List<Long>) : Call<Item?>
+
+    @GET("api/detailItemInfo/{itemId}")
+    fun getDetailItemInfo(@Path("itemId") itemId : Long) : Call<Item?>
 }

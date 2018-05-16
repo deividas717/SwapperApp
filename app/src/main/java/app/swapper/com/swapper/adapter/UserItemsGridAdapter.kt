@@ -30,10 +30,6 @@ class UserItemsGridAdapter: RecyclerView.Adapter<UserItemsGridAdapter.DataBindin
 
     val selectedItems = mutableListOf<Long?>()
 
-    init {
-
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder {
         if (inflater == null) {
             inflater = LayoutInflater.from(parent.context)

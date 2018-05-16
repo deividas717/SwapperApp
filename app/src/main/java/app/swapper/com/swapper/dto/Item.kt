@@ -3,7 +3,7 @@ package app.swapper.com.swapper.dto
 /**
  * Created by Deividas on 2018-04-07.
  */
-data class Item(val id: Long,
+data class Item(val id: Long = -1L,
                 val title : String,
                 val description : String,
                 val images : MutableList<String>?,

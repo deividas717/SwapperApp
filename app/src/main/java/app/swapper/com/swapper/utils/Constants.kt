@@ -5,6 +5,6 @@ package app.swapper.com.swapper.utils
  */
 class Constants {
     companion object {
-        const val serverAddress = "http://192.168.8.100:8080/"
+        const val serverAddress = "http://192.168.8.104:8080/"
     }
 }

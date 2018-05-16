@@ -20,7 +20,7 @@ class UserItemsHorizontalAdapter
     private lateinit var binding: UserGalleryItemBinding
 
     private var data: List<Item>? = null
-    val selectedItems: ObservableList<Int> = ObservableArrayList<Int>()
+    val selectedItems: ObservableArrayList<Int> = ObservableArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder {
         if (inflater == null) {
