@@ -48,6 +48,7 @@ class DetailItemActivity : BaseActivity() {
         val itemId = intent.getLongExtra(ITEM_ID, -1L)
         if (itemId != -1L) {
             viewModel.getDetailItemInfo(itemId)
+            viewModel.getCandidateItems(itemId)
         }
 
         fab.setOnClickListener({

@@ -37,6 +37,15 @@ object ViewModelBindings {
     }
 
     @JvmStatic
+    @BindingAdapter("otherUserItemRecyclerViewModel")
+    fun otherUserItemRecyclerViewModel(recyclerView: RecyclerView, viewModel: RecyclerViewViewModel<UserItemsGridAdapter>) {
+        recyclerView.layoutManager = GridLayoutManager(recyclerView.context, 3)
+        recyclerView.addItemDecoration(ColumnItemDecoration())
+        recyclerView.clipToPadding = false
+        viewModel.setupRecyclerView(recyclerView)
+    }
+
+    @JvmStatic
     @BindingAdapter("loadImage")
     fun loadImage(view: ImageView, item: Item) {
         item.images?.let {

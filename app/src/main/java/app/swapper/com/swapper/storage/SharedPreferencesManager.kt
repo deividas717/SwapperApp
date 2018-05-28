@@ -26,7 +26,8 @@ class SharedPreferencesManager private constructor(context: Context) {
 
     fun saveUser(user: User) {
         val editor = prefs.edit()
-        editor.putString(name, user.name)
+        editor.putLong(userId, user.userId)
+                .putString(name, user.name)
                 .putString(picture, user.img)
                 .putString(email, user.email)
                 .apply()

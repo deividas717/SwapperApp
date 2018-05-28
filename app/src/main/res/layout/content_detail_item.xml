@@ -47,9 +47,18 @@
 
                 </RelativeLayout>
 
+                <TextView
+                    android:layout_marginTop="20dp"
+                    android:textSize="18sp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:text="@{itemData.title}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
                 <RelativeLayout
+                    android:layout_marginTop="15dp"
                     android:id="@+id/viewB"
-                    android:layout_marginTop="30dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
                     android:layout_width="match_parent"
@@ -70,12 +79,17 @@
 
                 </RelativeLayout>
 
-                <Button
-                    android:layout_marginTop="20dp"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Suggested items"
+                <TextView
+                    android:text="Other users items"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content" />
+
+                <!--<android.support.v7.widget.RecyclerView-->
+                    <!--app:otherUserItemRecyclerViewModel="@{vm}"-->
+                    <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
 
             </LinearLayout>
 

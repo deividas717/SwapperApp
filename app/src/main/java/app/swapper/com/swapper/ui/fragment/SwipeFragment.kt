@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.CardView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,8 +55,8 @@ class SwipeFragment : Fragment() {
         swipeViewModel.data.observe(this, android.arch.lifecycle.Observer { handleData(it) })
 
         swipeView.addItemRemoveListener { count ->
-            swipeViewModel.changeCurrentItemIndex(true)
-            if (count < 5) swipeViewModel.getMoreCards()
+            Log.d("ASDASOIDSD", "$count")
+            swipeViewModel.askForMoreCards(count)
         }
 
         return binding.root
@@ -65,7 +66,6 @@ class SwipeFragment : Fragment() {
         data?.forEach {
             swipeView.addView(CardPresenter(it))
         }
-        swipeViewModel.increaseIndex()
     }
 
     fun getActiveCardId() : Long {

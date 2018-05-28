@@ -29,6 +29,7 @@ class LoginViewModel(private val prefs: SharedPreferencesManager, private val ap
 
     fun loginManagerSuccess(loginResult: LoginResult) {
         val request = GraphRequest.newMeRequest(loginResult.accessToken) { jsonObj, _ ->
+            Log.d("sdfuisdfsdf", loginResult.accessToken.token.toString())
             val fbToken = FbToken(loginResult.accessToken.token)
             getAccessToken(fbToken, jsonObj)
         }

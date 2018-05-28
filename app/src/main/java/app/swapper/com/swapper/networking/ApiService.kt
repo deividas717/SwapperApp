@@ -18,11 +18,16 @@ interface ApiService {
     @POST("auth/login")
     fun loginOrRegister(@Body fbToken: FbToken) : Call<AccessToken>
 
-    @GET("api/nearestItems/{email}/{lat}/{lng}/{beginAt}")
+    @GET("api/nearestItems/{email}/{lat}/{lng}/{downloadedIds}")
     fun getNearestItems(@Path("email") email : String,
                         @Path("lat") lat : Double,
                         @Path("lng") lng : Double,
-                        @Path("beginAt") beginAt : Int): Call<List<Item>>
+                        @Query("downloadedIds") downloadedIds : List<Long>): Call<List<Item>>
+
+    @GET("api/nearestItems/{email}/{lat}/{lng}")
+    fun getNearestItems(@Path("email") email : String,
+                        @Path("lat") lat : Double,
+                        @Path("lng") lng : Double): Call<List<Item>>
 
     @POST("api/createNewItem")
     fun createNewItem(@Body item : Item) : Call<Item>
@@ -41,4 +46,10 @@ interface ApiService {
 
     @GET("api/detailItemInfo/{itemId}")
     fun getDetailItemInfo(@Path("itemId") itemId : Long) : Call<Item?>
+
+    @GET("api/getCandidateItems/{itemId}")
+    fun getCandidateItems(@Path("itemId") itemId : Long) : Call<List<Item?>?>
+
+    @POST("api/markItemAsAlreadySeen/{itemId}/{userId}")
+    fun markItemAsAlreadySeen(@Path("itemId") itemId : Long, @Path("userId") userId : Long) : Call<ResponseBody>
 }

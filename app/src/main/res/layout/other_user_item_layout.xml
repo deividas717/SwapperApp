@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<de.hdodenhof.circleimageview.CircleImageView
+    android:id="@+id/otherUserItemImg"
+    android:layout_margin="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/software_update"
+    android:layout_width="80dp"
+    android:layout_height="80dp" />
