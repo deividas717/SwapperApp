@@ -1,12 +1,10 @@
 package app.swapper.com.swapper.ui
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.databinding.BindingAdapter
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.GridLayoutManager
 import android.widget.ImageView
-import app.swapper.com.swapper.adapter.AutoFitGridLayoutManager
 import app.swapper.com.swapper.adapter.ColumnItemDecoration
 import app.swapper.com.swapper.adapter.UserItemsGridAdapter
 import app.swapper.com.swapper.adapter.UserItemsHorizontalAdapter

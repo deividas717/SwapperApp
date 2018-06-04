@@ -3,18 +3,25 @@ package app.swapper.com.swapper.ui.activity
 import android.Manifest
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.databinding.DataBindingUtil
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.util.Log
 import android.view.*
+import android.view.animation.Animation
 import android.widget.TextView
 import app.swapper.com.swapper.service.LocationService
 import app.swapper.com.swapper.R
+import app.swapper.com.swapper.State
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.databinding.ActivityMainBinding
 import app.swapper.com.swapper.dto.User
+import app.swapper.com.swapper.events.SelectionEvent
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.ui.dialog.MatchDialog
 import app.swapper.com.swapper.ui.factory.UserItemViewModelFactory
@@ -25,6 +32,7 @@ import com.facebook.AccessToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
+import org.greenrobot.eventbus.Subscribe
 
 
 class MainActivity : BaseActivity(),
@@ -49,8 +57,14 @@ class MainActivity : BaseActivity(),
         val swipeFragment = supportFragmentManager.findFragmentById(R.id.swipeFragment) as SwipeFragment
 
         sendBtn.setOnClickListener {
-            val activeCardId = swipeFragment.getActiveCardId()
-            userViewModel.sendItemExchangeRequest(activeCardId)
+            if (userViewModel.isExecutingRequest.value == false) {
+                val activeCardId = swipeFragment.getActiveCardId()
+                userViewModel.sendItemExchangeRequest(activeCardId)
+            }
+        }
+
+        blurView.setOnClickListener {
+            return@setOnClickListener
         }
 
         menuToggle.setOnClickListener {
@@ -61,8 +75,18 @@ class MainActivity : BaseActivity(),
             }
         }
 
-        userViewModel.showDialog.observe(this, android.arch.lifecycle.Observer {
+        userViewModel.state.observe(this, android.arch.lifecycle.Observer {
             it?.let { handleDialogVisibility(it) }
+        })
+
+        userViewModel.isExecutingRequest.observe(this, android.arch.lifecycle.Observer {
+            if (it != null) {
+                if (it) {
+                    blurView.visibility = View.VISIBLE
+                    return@Observer
+                }
+            }
+            blurView.visibility = View.GONE
         })
 
         nav_view.setNavigationItemSelectedListener(this)
@@ -130,11 +154,46 @@ class MainActivity : BaseActivity(),
         }
     }
 
-    private fun handleDialogVisibility(show: Boolean) {
-        if (show) {
-            val dialogFragment = MatchDialog()
-            dialogFragment.show(supportFragmentManager, "MatchDialog")
-            userViewModel.showDialog.value = false
+    fun resetAllSelectableStates() {
+        userViewModel.resetAllSelectableStates()
+    }
+
+    private fun handleDialogVisibility(state: State) {
+//        if (show) {
+//            val dialogFragment = MatchDialog()
+//            dialogFragment.show(supportFragmentManager, "MatchDialog")
+//            userViewModel.showDialog.value = false
+//        }
+        val handler = Handler()
+        handler.postDelayed({
+            when (state) {
+                State.DELETE -> {
+                    sendBtn.setImageResource(R.drawable.ic_delete_black_24dp)
+                }
+                State.EDIT -> {
+                    sendBtn.setImageResource(R.drawable.ic_edit_black_24dp)
+                }
+                State.SEND -> {
+                    sendBtn.setImageResource(R.drawable.ic_send)
+                }
+            }
+        }, 1000)
+    }
+
+    @Subscribe
+    fun onUserClickOnHisItems(obj: SelectionEvent) {
+        var color = ColorStateList.valueOf(Color.GRAY)
+        color = when (obj.state) {
+            State.DELETE -> {
+                if (!obj.isEmpty) { ColorStateList.valueOf(Color.RED) } else { color }
+            }
+            State.EDIT -> {
+                if (!obj.isEmpty) { ColorStateList.valueOf(Color.GREEN) } else { color }
+            }
+            State.SEND -> {
+                ColorStateList.valueOf(Color.BLUE)
+            }
         }
+        sendBtn.backgroundTintList = color
     }
 }

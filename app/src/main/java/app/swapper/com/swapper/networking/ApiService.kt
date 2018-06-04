@@ -40,9 +40,20 @@ interface ApiService {
     @GET("api/user/{email}")
     fun getUserItems(@Path("email") email : String): Call<UserData>
 
-    @POST("api/markItem/{itemId}")
-    fun markItem(@Path("itemId") itemId : Long,
-                 @Body numbers : List<Long>) : Call<Item?>
+    @POST("api/markItem/{itemId}/{userId}")
+    fun sendItemSelectionList(@Path("itemId") itemId : Long,
+                 @Path("userId") userId : Long,
+                 @Body numbers : List<Long>) : Call<ResponseBody>
+
+    @HTTP(method = "DELETE", hasBody = true, path = "api/deleteItemSelectedIds/{itemId}/{userId}")
+    fun deleteItemSelectedIds(@Path("itemId") itemId : Long,
+                 @Path("userId") userId : Long,
+                 @Body numbers : List<Long>) : Call<ResponseBody>
+
+    @POST("api/markItem/{itemId}/{userId}")
+    fun updateItemSuggestionList(@Path("itemId") itemId : Long,
+                 @Path("userId") userId : Long,
+                 @Body numbers : List<Long>) : Call<ResponseBody>
 
     @GET("api/detailItemInfo/{itemId}")
     fun getDetailItemInfo(@Path("itemId") itemId : Long) : Call<Item?>

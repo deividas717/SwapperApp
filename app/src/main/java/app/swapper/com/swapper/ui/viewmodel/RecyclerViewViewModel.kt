@@ -2,7 +2,7 @@ package app.swapper.com.swapper.ui.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.support.v7.widget.RecyclerView
-import app.swapper.com.swapper.adapter.TestInterface
+import app.swapper.com.swapper.adapter.DataPresenterInterface
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.dto.UserData
 import app.swapper.com.swapper.networking.ApiService
@@ -30,7 +30,7 @@ abstract class RecyclerViewViewModel<out T : RecyclerView.Adapter<*>>(private va
                         if (response.isSuccessful) {
                             val userItems = response.body()
                             userItems?.let {
-                                (getAdapter() as TestInterface).setDataList(it.items)
+                                (getAdapter() as DataPresenterInterface).setDataList(it.items)
                             }
                         }
                     }

@@ -18,6 +18,7 @@ import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.events.LocationChangeEvent
 import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.ui.SwipeView
+import app.swapper.com.swapper.ui.activity.MainActivity
 import app.swapper.com.swapper.ui.viewmodel.SwipeViewModel
 import app.swapper.com.swapper.utils.Constants
 import com.bumptech.glide.Glide
@@ -55,7 +56,7 @@ class SwipeFragment : Fragment() {
         swipeViewModel.data.observe(this, android.arch.lifecycle.Observer { handleData(it) })
 
         swipeView.addItemRemoveListener { count ->
-            Log.d("ASDASOIDSD", "$count")
+            (activity as MainActivity).resetAllSelectableStates()
             swipeViewModel.askForMoreCards(count)
         }
 

@@ -2,25 +2,51 @@ package app.swapper.com.swapper.adapter
 
 import android.databinding.DataBindingUtil
 import android.databinding.ObservableArrayList
-import android.databinding.ObservableList
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import app.swapper.com.swapper.R
+import app.swapper.com.swapper.State
 import app.swapper.com.swapper.databinding.UserGalleryItemBinding
 import app.swapper.com.swapper.dto.Item
+import app.swapper.com.swapper.events.SelectionEvent
+import kotlinx.android.synthetic.main.user_gallery_item.view.*
+import org.greenrobot.eventbus.EventBus
 
 /**
  * Created by Deividas on 2018-04-07.
  */
-class UserItemsHorizontalAdapter
-    : RecyclerView.Adapter<UserItemsHorizontalAdapter.DataBindingViewHolder>(), TestInterface {
+class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapter.DataBindingViewHolder>(),
+        DataPresenterInterface {
 
     private var inflater: LayoutInflater? = null
     private lateinit var binding: UserGalleryItemBinding
 
     private var data: List<Item>? = null
     val selectedItems: ObservableArrayList<Int> = ObservableArrayList()
+    val selectedItemsTest: ObservableArrayList<Int> = ObservableArrayList()
+
+    var state: State = State.SEND
+        set(value)  {
+            field = value
+            if (value == State.EDIT) {
+                selectedItems.removeAll(selectedItemsTest)
+            }
+            selectedItemsTest.clear()
+        }
+
+    val selectedItemsId: List<Long>
+        get() {
+            val list = mutableListOf<Long>()
+            data?.let { item ->
+                val collection = if (state != State.SEND) selectedItemsTest else selectedItems
+                collection.forEach {
+                    list.add(item[it].id)
+                }
+            }
+            return list
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder {
         if (inflater == null) {
@@ -48,10 +74,49 @@ class UserItemsHorizontalAdapter
             viewHolder.viewBinding.userItem = it[position]
             viewHolder.viewBinding.executePendingBindings()
 
-            if (selectedItems.contains(position)) {
-                viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.shadow)
-            } else {
-                viewHolder.viewBinding.rootLayout.background = null
+            when (state) {
+                State.EDIT -> {
+                    val isExistInMainCollection = isExist(position, selectedItems)
+                    if (isExistInMainCollection) {
+                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
+                        viewHolder.viewBinding.rootLayout.background = null
+                    } else {
+                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
+                        viewHolder.viewBinding.rootLayout.background = null
+                    }
+
+                    val isExistInSecondCollection = isExist(position, selectedItemsTest)
+                    if (isExistInSecondCollection) {
+                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
+                    } else {
+                        viewHolder.viewBinding.rootLayout.background = null
+                    }
+                }
+                State.DELETE -> {
+                    val isExistInMainCollection = isExist(position, selectedItems)
+                    if (!isExistInMainCollection) {
+                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
+                        viewHolder.viewBinding.rootLayout.background = null
+                    } else {
+                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
+                        viewHolder.viewBinding.rootLayout.background = null
+                    }
+                    val isExistInSecondCollection = isExist(position, selectedItemsTest)
+                    if (isExistInSecondCollection) {
+                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.unselect_shadow)
+                    } else {
+                        viewHolder.viewBinding.rootLayout.background = null
+                    }
+                }
+                State.SEND -> {
+                    val isExistInMainCollection = isExist(position, selectedItems)
+                    if (isExistInMainCollection) {
+                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
+                    } else {
+                        viewHolder.viewBinding.rootLayout.background = null
+                    }
+                    viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
+                }
             }
         }
     }
@@ -63,41 +128,84 @@ class UserItemsHorizontalAdapter
         return 0
     }
 
-    private fun isExist(position : Int) : Boolean {
-        selectedItems.forEach {
+    private fun isExist(position : Int, collection: List<Int>) : Boolean {
+        collection.forEach {
             if (it == position) return true
         }
         return false
     }
 
-    fun getSelectedItemsIds() : List<Long> {
-        val list = mutableListOf<Long>()
-        data?.let {
-            val item = it
-            selectedItems.forEach {
-                list.add(item[it].id)
-            }
+    fun resetAllSelectableStates() {
+        if (selectedItems.isNotEmpty()) {
+            selectedItems.clear()
+            notifyDataSetChanged()
+            updateFabColor(null)
         }
-        return list
     }
 
-    fun resetAllSelectableStates() {
-        selectedItems.clear()
+    fun changeSelectedItemsBackground() {
         notifyDataSetChanged()
+        updateFabColor(null)
     }
 
     inner class DataBindingViewHolder(val viewBinding: UserGalleryItemBinding) : RecyclerView.ViewHolder(viewBinding.root) {
-
         init {
             viewBinding.userGalleryCard.setOnClickListener {
-                if (isExist(adapterPosition)) {
-                    selectedItems.remove(adapterPosition)
-                    viewBinding.rootLayout.background = null
-                } else {
-                    selectedItems.add(adapterPosition)
-                    viewBinding.rootLayout.setBackgroundResource(R.drawable.shadow)
+                when (state) {
+                    State.EDIT -> {
+                        val isExistInMainCollection = isExist(adapterPosition, selectedItems)
+                        if (isExistInMainCollection) return@setOnClickListener
+
+                        val isExistInSecondCollection = isExist(adapterPosition, selectedItemsTest)
+
+                        if (isExistInSecondCollection) {
+                            selectedItemsTest.remove(adapterPosition)
+                            viewBinding.rootLayout.background = null
+
+                        } else {
+                            selectedItemsTest.add(adapterPosition)
+                            viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
+                        }
+
+                        updateFabColor(selectedItemsTest)
+                    }
+                    State.DELETE -> {
+                        val isExistInMainCollection = isExist(adapterPosition, selectedItems)
+                        if (!isExistInMainCollection) return@setOnClickListener
+
+                        val isExistInSecondCollection = isExist(adapterPosition, selectedItemsTest)
+
+                        if (isExistInSecondCollection) {
+                            selectedItemsTest.remove(adapterPosition)
+                            viewBinding.rootLayout.background = null
+                        } else {
+                            selectedItemsTest.add(adapterPosition)
+                            viewBinding.rootLayout.setBackgroundResource(R.drawable.unselect_shadow)
+                        }
+
+                        updateFabColor(selectedItemsTest)
+                    }
+                    State.SEND -> {
+                        if (isExist(adapterPosition, selectedItems)) {
+                            selectedItems.remove(adapterPosition)
+                            viewBinding.rootLayout.background = null
+                        } else {
+                            selectedItems.add(adapterPosition)
+                            viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
+                        }
+
+                        updateFabColor(selectedItems)
+                    }
                 }
             }
         }
+    }
+
+    private fun updateFabColor(collection: ObservableArrayList<Int>?) {
+        if (collection == null) {
+            EventBus.getDefault().post(SelectionEvent(true, state))
+            return
+        }
+        EventBus.getDefault().post(SelectionEvent(collection.isEmpty(), state))
     }
 }

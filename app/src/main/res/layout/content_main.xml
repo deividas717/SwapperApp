@@ -26,23 +26,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp" />
 
-            <android.support.v7.widget.CardView
+            <RelativeLayout
                 android:layout_weight=".17"
-                android:id="@+id/cardView"
-                app:cardElevation="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
 
-                <android.support.v7.widget.RecyclerView
-                    android:orientation="horizontal"
-                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                    app:recyclerViewHorizontalViewModel="@{vm}"
-                    android:scrollbars="horizontal"
-                    android:id="@+id/userGalleryRecyclerView"
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardView"
+                    app:cardElevation="20dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent">
 
-            </android.support.v7.widget.CardView>
+                    <android.support.v7.widget.RecyclerView
+                        android:orientation="horizontal"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        app:recyclerViewHorizontalViewModel="@{vm}"
+                        android:scrollbars="horizontal"
+                        android:id="@+id/userGalleryRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <RelativeLayout
+                        android:background="#00ffffff"
+                        android:visibility="gone"
+                        android:id="@+id/blurView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ProgressBar
+                            android:layout_centerInParent="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent" />
+
+                    </RelativeLayout>
+
+                </android.support.v7.widget.CardView>
+
+            </RelativeLayout>
 
         </LinearLayout>
 

@@ -34,6 +34,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <app.swapper.com.swapper.utils.SquareImageView
+                android:visibility="gone"
+                android:background="#d48b8b8b"
+                android:scaleType="fitXY"
+                android:id="@+id/foregroundImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
         </android.support.v7.widget.CardView>
 
     </RelativeLayout>

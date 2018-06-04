@@ -1,8 +1,6 @@
 package app.swapper.com.swapper.adapter
 
 import android.databinding.DataBindingUtil
-import android.graphics.Color
-import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,13 +11,12 @@ import app.swapper.com.swapper.BR
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.databinding.UserGalleryDetailItemBinding
 import app.swapper.com.swapper.dto.Item
-import kotlinx.android.synthetic.main.user_gallery_detail_item.view.*
 
 
 /**
  * Created by Deividas on 2018-05-01.
  */
-class UserItemsGridAdapter: RecyclerView.Adapter<UserItemsGridAdapter.DataBindingViewHolder>(), TestInterface {
+class UserItemsGridAdapter: RecyclerView.Adapter<UserItemsGridAdapter.DataBindingViewHolder>(), DataPresenterInterface {
 
     private var inflater: LayoutInflater? = null
     private lateinit var binding: UserGalleryDetailItemBinding
