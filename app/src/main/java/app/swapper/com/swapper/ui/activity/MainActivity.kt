@@ -194,6 +194,7 @@ class MainActivity : BaseActivity(),
                 ColorStateList.valueOf(Color.BLUE)
             }
         }
+        
         sendBtn.backgroundTintList = color
     }
 }
