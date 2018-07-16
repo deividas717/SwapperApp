@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="app.swapper.com.swapper.dto.Item" />
+
+        <variable
+            name="location"
+            type="android.location.Location" />
+        
+        <import type="android.view.View" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_weight=".8"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+                <android.support.v7.widget.AppCompatImageView
+                    app:loadImage="@{item}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <RelativeLayout
+                    android:padding="10dp"
+                    android:background="@drawable/text_scrim"
+                    android:layout_alignParentBottom="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:paddingBottom="2dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="6dp"
+                        android:paddingStart="6dp"
+                        android:background="@drawable/background_card_basic_info"
+                        android:id="@+id/watchLayout"
+                        android:layout_alignParentStart="true"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <android.support.v7.widget.AppCompatImageView
+                            android:tint="@android:color/white"
+                            app:srcCompat="@drawable/ic_star_black_24dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:textColor="@android:color/white"
+                            android:id="@+id/watchTextView"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="5dp"
+                            android:text="@{String.valueOf(item.candidatesCount)}"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:ignore="HardcodedText" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:visibility="@{item.price > 0 ? View.VISIBLE : View.GONE}"
+                        android:paddingBottom="2dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="6dp"
+                        android:paddingStart="6dp"
+                        android:background="@drawable/background_card_basic_info"
+                        android:id="@+id/priceLayout"
+                        android:layout_centerInParent="true"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <android.support.v7.widget.AppCompatImageView
+                            android:tint="#ffffff"
+                            app:srcCompat="@drawable/ic_attach_money_black_24dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:text="@{String.valueOf(item.price)}"
+                            android:textColor="@android:color/white"
+                            android:id="@+id/priceTextView"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:paddingBottom="2dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="6dp"
+                        android:paddingStart="6dp"
+                        android:background="@drawable/background_card_basic_info"
+                        android:id="@+id/distanceLayout"
+                        android:layout_alignParentEnd="true"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="RelativeOverlap">
+
+                        <android.support.v7.widget.AppCompatImageView
+                            android:tint="@android:color/white"
+                            app:srcCompat="@drawable/ic_place_black_24dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            app:item="@{item}"
+                            app:phoneLocation="@{location}"
+                            android:textColor="@android:color/white"
+                            android:id="@+id/distanceTextView"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:visibility="gone"
+                    android:id="@+id/checkImage"
+                    android:layout_margin="10dp"
+                    android:layout_alignParentEnd="true"
+                    app:srcCompat="@drawable/check"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_weight=".2"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:text="@{item.title}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</layout>

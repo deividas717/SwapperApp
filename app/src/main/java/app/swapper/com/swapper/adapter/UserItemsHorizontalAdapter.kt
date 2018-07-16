@@ -3,6 +3,7 @@ package app.swapper.com.swapper.adapter
 import android.databinding.DataBindingUtil
 import android.databinding.ObservableArrayList
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,12 @@ class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapt
         set(value)  {
             field = value
             if (value == State.EDIT) {
+                Log.d("ASDUASDSDSd", "ATNAUJINAMA " + selectedItemsTest.size + " " + selectedItems.size)
                 selectedItems.removeAll(selectedItemsTest)
+
+                selectedItems.forEach {
+                    Log.d("ASDUASDSDSd", "selectedItems " + it)
+                }
             }
             selectedItemsTest.clear()
         }
@@ -74,50 +80,50 @@ class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapt
             viewHolder.viewBinding.userItem = it[position]
             viewHolder.viewBinding.executePendingBindings()
 
-            when (state) {
-                State.EDIT -> {
-                    val isExistInMainCollection = isExist(position, selectedItems)
-                    if (isExistInMainCollection) {
-                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
-                        viewHolder.viewBinding.rootLayout.background = null
-                    } else {
-                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
-                        viewHolder.viewBinding.rootLayout.background = null
-                    }
-
-                    val isExistInSecondCollection = isExist(position, selectedItemsTest)
-                    if (isExistInSecondCollection) {
-                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
-                    } else {
-                        viewHolder.viewBinding.rootLayout.background = null
-                    }
-                }
-                State.DELETE -> {
-                    val isExistInMainCollection = isExist(position, selectedItems)
-                    if (!isExistInMainCollection) {
-                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
-                        viewHolder.viewBinding.rootLayout.background = null
-                    } else {
-                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
-                        viewHolder.viewBinding.rootLayout.background = null
-                    }
-                    val isExistInSecondCollection = isExist(position, selectedItemsTest)
-                    if (isExistInSecondCollection) {
-                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.unselect_shadow)
-                    } else {
-                        viewHolder.viewBinding.rootLayout.background = null
-                    }
-                }
-                State.SEND -> {
-                    val isExistInMainCollection = isExist(position, selectedItems)
-                    if (isExistInMainCollection) {
-                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
-                    } else {
-                        viewHolder.viewBinding.rootLayout.background = null
-                    }
-                    viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
-                }
-            }
+//            when (state) {
+//                State.EDIT -> {
+//                    val isExistInMainCollection = position in selectedItems
+//                    if (isExistInMainCollection) {
+//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
+//                        viewHolder.viewBinding.rootLayout.background = null
+//                    } else {
+//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
+//                        viewHolder.viewBinding.rootLayout.background = null
+//                    }
+//
+//                    val isExistInSecondCollection = position in selectedItemsTest
+//                    if (isExistInSecondCollection) {
+//                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
+//                    } else {
+//                        viewHolder.viewBinding.rootLayout.background = null
+//                    }
+//                }
+//                State.DELETE -> {
+//                    val isExistInMainCollection = isExist(position, selectedItems)
+//                    if (!isExistInMainCollection) {
+//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
+//                        viewHolder.viewBinding.rootLayout.background = null
+//                    } else {
+//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
+//                        viewHolder.viewBinding.rootLayout.background = null
+//                    }
+//                    val isExistInSecondCollection = isExist(position, selectedItemsTest)
+//                    if (isExistInSecondCollection) {
+//                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.unselect_shadow)
+//                    } else {
+//                        viewHolder.viewBinding.rootLayout.background = null
+//                    }
+//                }
+//                State.SEND -> {
+//                    val isExistInMainCollection = isExist(position, selectedItems)
+//                    if (isExistInMainCollection) {
+//                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
+//                    } else {
+//                        viewHolder.viewBinding.rootLayout.background = null
+//                    }
+//                    viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
+//                }
+//            }
         }
     }
 
@@ -129,10 +135,7 @@ class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapt
     }
 
     private fun isExist(position : Int, collection: List<Int>) : Boolean {
-        collection.forEach {
-            if (it == position) return true
-        }
-        return false
+        return position in collection
     }
 
     fun resetAllSelectableStates() {
@@ -157,6 +160,8 @@ class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapt
                         if (isExistInMainCollection) return@setOnClickListener
 
                         val isExistInSecondCollection = isExist(adapterPosition, selectedItemsTest)
+
+                        //if (isExistInSecondCollection) return@setOnClickListener
 
                         if (isExistInSecondCollection) {
                             selectedItemsTest.remove(adapterPosition)

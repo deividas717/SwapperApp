@@ -10,17 +10,10 @@
     </data>
 
     <app.swapper.com.swapper.utils.SquareView
+        app:loadImage="@{userItem}"
+        android:scaleType="fitXY"
         android:id="@+id/squareView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.AppCompatImageView
-            app:loadImage="@{userItem}"
-            android:scaleType="fitXY"
-            android:id="@+id/userGalleryImg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </app.swapper.com.swapper.utils.SquareView>
+        android:layout_height="match_parent" />
 
 </layout>

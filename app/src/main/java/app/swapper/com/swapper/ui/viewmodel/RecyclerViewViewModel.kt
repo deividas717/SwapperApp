@@ -2,6 +2,7 @@ package app.swapper.com.swapper.ui.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import app.swapper.com.swapper.adapter.DataPresenterInterface
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.dto.UserData
@@ -32,12 +33,14 @@ abstract class RecyclerViewViewModel<out T : RecyclerView.Adapter<*>>(private va
                             userItems?.let {
                                 (getAdapter() as DataPresenterInterface).setDataList(it.items)
                             }
+                        } else {
+                            Log.d("ASDSUIADSDS", "response not success")
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<UserData>?, t: Throwable?) {
-
+                    Log.d("ASDSUIADSDS", t?.message)
                 }
             })
         }

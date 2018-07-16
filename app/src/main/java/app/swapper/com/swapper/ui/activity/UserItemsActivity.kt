@@ -12,7 +12,7 @@ import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.databinding.ActivityUserItemsBinding
 import app.swapper.com.swapper.events.OnCardClickedEvent
-import app.swapper.com.swapper.ui.factory.UserItemsGalleryViewModel
+import app.swapper.com.swapper.ui.viewmodel.factory.UserItemsGalleryViewModel
 import app.swapper.com.swapper.ui.viewmodel.UserProfileItemViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

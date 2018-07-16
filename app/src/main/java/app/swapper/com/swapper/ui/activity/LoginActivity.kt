@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
         when (status) {
             LoginStatus.SUCCESS -> startMainActivity()
             else -> {
-                Toast.makeText(applicationContext, "Error has ocured", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Error has occurred", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -10,10 +10,11 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
-import app.swapper.com.swapper.ui.factory.CreateNewItemViewModelFactory
+import app.swapper.com.swapper.ui.viewmodel.factory.CreateNewItemViewModelFactory
 import app.swapper.com.swapper.LocationData
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.TradeType
 import app.swapper.com.swapper.utils.Utils
 import app.swapper.com.swapper.databinding.ActivityCreateNewItemBinding
 import app.swapper.com.swapper.dto.Item
@@ -65,6 +66,7 @@ class CreateNewItemActivity : BaseActivity() {
                             null,
                             location.latitude,
                             location.longitude,
+                            TradeType.MIX,
                             user
                     )
                     viewModel.sendItemDataToServer(item)

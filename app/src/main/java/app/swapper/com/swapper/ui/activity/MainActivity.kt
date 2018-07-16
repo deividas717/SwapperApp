@@ -2,43 +2,68 @@ package app.swapper.com.swapper.ui.activity
 
 import android.Manifest
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.databinding.DataBindingUtil
-import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
+import android.support.v7.app.AlertDialog
 import android.util.Log
-import android.view.*
-import android.view.animation.Animation
+import android.view.Gravity
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 import android.widget.TextView
-import app.swapper.com.swapper.service.LocationService
+import android.widget.Toast
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.State
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.databinding.ActivityMainBinding
+import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
+import app.swapper.com.swapper.events.LocationChangeEvent
+import app.swapper.com.swapper.events.OnCardDismissedEvent
 import app.swapper.com.swapper.events.SelectionEvent
+import app.swapper.com.swapper.service.LocationService
 import app.swapper.com.swapper.storage.SharedPreferencesManager
-import app.swapper.com.swapper.ui.dialog.MatchDialog
-import app.swapper.com.swapper.ui.factory.UserItemViewModelFactory
-import app.swapper.com.swapper.ui.fragment.SwipeFragment
+import app.swapper.com.swapper.swipableCard.TinderCardView
+import app.swapper.com.swapper.ui.viewmodel.MainActivityViewModel
 import app.swapper.com.swapper.ui.viewmodel.UserItemViewModel
+import app.swapper.com.swapper.ui.viewmodel.factory.MainActivityViewModelFactory
+import app.swapper.com.swapper.ui.viewmodel.factory.UserItemViewModelFactory
 import com.bumptech.glide.Glide
+import com.elvishew.xlog.XLog
 import com.facebook.AccessToken
+import org.greenrobot.eventbus.Subscribe
+import rx.Subscriber
+import rx.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.nav_header_main.*
-import org.greenrobot.eventbus.Subscribe
-
+import kotlinx.android.synthetic.main.user_items_bottom_sheet.*
 
 class MainActivity : BaseActivity(),
         NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var userViewModel: UserItemViewModel
+    private var location: Location? = null
+    private var user: User? = null
+
+    private val mainViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        val swaggerApp = application as SwaggerApp
+        val apiService = swaggerApp.getRetrofit()
+        user = swaggerApp.getUser()
+        ViewModelProviders.of(this, MainActivityViewModelFactory(apiService, user?.email)).get(MainActivityViewModel::class.java)
+    }
+
+    private val userViewModel by lazy(LazyThreadSafetyMode.NONE) {
+        val swaggerApp = application as SwaggerApp
+        val apiService = swaggerApp.getRetrofit()
+        user = swaggerApp.getUser()
+        ViewModelProviders.of(this, UserItemViewModelFactory(apiService, user)).get(UserItemViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,26 +71,9 @@ class MainActivity : BaseActivity(),
         requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        val swaggerApp = (application as SwaggerApp)
-        val apiService = swaggerApp.getRetrofit()
-        val user = swaggerApp.getUser()
 
-        userViewModel = ViewModelProviders.of(this, UserItemViewModelFactory(apiService, user)).get(UserItemViewModel::class.java)
         userViewModel.askServerForUserItems()
         binding.vm = userViewModel
-
-        val swipeFragment = supportFragmentManager.findFragmentById(R.id.swipeFragment) as SwipeFragment
-
-        sendBtn.setOnClickListener {
-            if (userViewModel.isExecutingRequest.value == false) {
-                val activeCardId = swipeFragment.getActiveCardId()
-                userViewModel.sendItemExchangeRequest(activeCardId)
-            }
-        }
-
-        blurView.setOnClickListener {
-            return@setOnClickListener
-        }
 
         menuToggle.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -75,33 +83,96 @@ class MainActivity : BaseActivity(),
             }
         }
 
-        userViewModel.state.observe(this, android.arch.lifecycle.Observer {
-            it?.let { handleDialogVisibility(it) }
-        })
+       cardStackView.publishSubject.observeOn(AndroidSchedulers.mainThread()).subscribe(object : Subscriber<Int>() {
+           override fun onNext(index: Int) {
 
-        userViewModel.isExecutingRequest.observe(this, android.arch.lifecycle.Observer {
-            if (it != null) {
-                if (it) {
-                    blurView.visibility = View.VISIBLE
-                    return@Observer
-                }
-            }
-            blurView.visibility = View.GONE
-        })
+           }
+
+           override fun onCompleted() {
+
+           }
+
+           override fun onError(e: Throwable?) {
+
+           }
+       })
+
+        userViewModel.data.observe(this, android.arch.lifecycle.Observer { it?.let { handleData(it) } })
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        if (user != null) {
-            setUpHeaderData(user, nav_view.getHeaderView(0))
+        setUpHeaderData(nav_view.getHeaderView(0))
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        //bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        bottomSheetBehavior.peekHeight = 340
+        bottomSheetBehavior.isHideable = true
+    }
+
+    private fun handleData(data: List<Item>) {
+        if (data.isNotEmpty()) {
+            addCards(0, false)
+        } else if (cardStackView.childCount == 0) {
+            Toast.makeText(applicationContext, "No data", Toast.LENGTH_LONG).show()
+        }
+        cardsProgressBar.visibility = View.GONE
+    }
+
+    fun showPopup(v: View) {
+        val popup = PopupMenu(applicationContext, v)
+        popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
+        popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                when (item?.itemId) {
+                    R.id.popup_menu_swap -> {
+
+                    }
+                    R.id.popup_menu_buy -> {
+
+                    }
+                    R.id.popup_menu_all -> {
+
+                    }
+                }
+                return true
+            }
+        })
+        popup.show()
+    }
+
+    var counter = 0
+    private fun addCards(cardsLeft: Int = 0, cardDismissed: Boolean = true) {
+        counter++
+        val test = userViewModel.indexData(cardsLeft, cardDismissed)
+        test?.forEach {
+            cardStackView.addCard(TinderCardView(this, it))
         }
     }
 
-    private fun setUpHeaderData(user: User, navHeader: View) {
-        Glide.with(applicationContext).load(user.img).into(nav_view.getHeaderView(0).findViewById(R.id.profileImage))
-        val name = navHeader.findViewById<TextView>(R.id.nameTextView)
-        val email = navHeader.findViewById<TextView>(R.id.emailTextView)
-        name.text = user.name
-        email.text = user.email
+    @Subscribe
+    fun onLocationChanged(obj: LocationChangeEvent) {
+        location = obj.location
+        location?.let {
+            userViewModel.changeLocation(it)
+        }
+    }
+
+    @Subscribe
+    fun onCardDismissedEvent(obj: OnCardDismissedEvent) {
+        addCards(obj.count)
+    }
+
+    private fun setUpHeaderData( navHeader: View) {
+        user?.let {
+            Glide.with(applicationContext).load(it.img).into(nav_view.getHeaderView(0).findViewById(R.id.profileImage))
+            val name = navHeader.findViewById<TextView>(R.id.nameTextView)
+            val email = navHeader.findViewById<TextView>(R.id.emailTextView)
+            name.text = it.name
+            email.text = it.email
+        }
     }
 
     override fun onBackPressed() {
@@ -122,7 +193,7 @@ class MainActivity : BaseActivity(),
                 startActivity(Intent(this, UserItemsActivity::class.java));
             }
             R.id.nav_slideshow -> {
-
+                startActivity(HistoryActivity.createNewIntent(applicationContext, location?.latitude, location?.longitude));
             }
             R.id.nav_manage -> {
 
@@ -131,10 +202,7 @@ class MainActivity : BaseActivity(),
 
             }
             R.id.nav_send -> {
-                val prefs = SharedPreferencesManager.getInstance(applicationContext)
-                prefs.clearAllData()
-                AccessToken.setCurrentAccessToken(null)
-                startActivity(Intent(this, LoginActivity::class.java));
+                logoutDialog()
             }
         }
 
@@ -168,13 +236,13 @@ class MainActivity : BaseActivity(),
         handler.postDelayed({
             when (state) {
                 State.DELETE -> {
-                    sendBtn.setImageResource(R.drawable.ic_delete_black_24dp)
+                    //sendBtn.setImageResource(R.drawable.ic_delete_black_24dp)
                 }
                 State.EDIT -> {
-                    sendBtn.setImageResource(R.drawable.ic_edit_black_24dp)
+                    //sendBtn.setImageResource(R.drawable.ic_edit_black_24dp)
                 }
                 State.SEND -> {
-                    sendBtn.setImageResource(R.drawable.ic_send)
+                   // sendBtn.setImageResource(R.drawable.ic_send)
                 }
             }
         }, 1000)
@@ -182,19 +250,39 @@ class MainActivity : BaseActivity(),
 
     @Subscribe
     fun onUserClickOnHisItems(obj: SelectionEvent) {
-        var color = ColorStateList.valueOf(Color.GRAY)
-        color = when (obj.state) {
-            State.DELETE -> {
-                if (!obj.isEmpty) { ColorStateList.valueOf(Color.RED) } else { color }
-            }
-            State.EDIT -> {
-                if (!obj.isEmpty) { ColorStateList.valueOf(Color.GREEN) } else { color }
-            }
-            State.SEND -> {
-                ColorStateList.valueOf(Color.BLUE)
+//        var color = ColorStateList.valueOf(Color.GRAY)
+//        color = when (obj.state) {
+//            State.DELETE -> {
+//                if (!obj.isEmpty) { ColorStateList.valueOf(Color.RED) } else { color }
+//            }
+//            State.EDIT -> {
+//                if (!obj.isEmpty) { ColorStateList.valueOf(Color.GREEN) } else { color }
+//            }
+//            State.SEND -> {
+//                ColorStateList.valueOf(Color.BLUE)
+//            }
+//        }
+
+        //sendBtn.backgroundTintList = color
+    }
+
+    private fun logoutDialog() {
+        val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE -> {
+                    val prefs = SharedPreferencesManager.getInstance(applicationContext)
+                    prefs.clearAllData()
+                    AccessToken.setCurrentAccessToken(null)
+                    startActivity(Intent(this, LoginActivity::class.java))
+                }
+
+                DialogInterface.BUTTON_NEGATIVE -> {
+                    dialog.dismiss()
+                }
             }
         }
-        
-        sendBtn.backgroundTintList = color
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Logout").setMessage("Are you sure you want to logout?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show()
     }
 }

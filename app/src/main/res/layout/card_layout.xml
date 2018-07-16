@@ -1,68 +1,95 @@
-<FrameLayout
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/card_layout"
-    android:layout_height="380dp"
-    android:layout_width="300dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="app.swapper.com.swapper.dto.Item" />
+    </data>
 
     <android.support.v7.widget.CardView
-        android:layout_marginTop="35dp"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card"
+        android:layout_margin="24dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        card_view:cardElevation="4dp"
-        card_view:cardPreventCornerOverlap="false"
-        card_view:cardUseCompatPadding="true">
+        app:cardUseCompatPadding="true"
+        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardCornerRadius="8dp">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:layout_weight=".7"
-                android:layout_width="match_parent"
-                android:layout_height="0dp">
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/itemImage"
+                app:loadImage="@{item}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toTopOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/software_update" />
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:scaleType="centerCrop"
-                    android:id="@+id/itemImg"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <View
+                android:id="@+id/view2"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:background="@drawable/text_scrim"
+                app:layout_constraintBottom_toTopOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/itemName"
-                    android:paddingBottom="5dp"
-                    android:textSize="20sp"
-                    android:textColor="#fff"
-                    android:background="@drawable/text_scrim"
-                    android:gravity="center_horizontal"
-                    android:layout_alignParentBottom="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </RelativeLayout>
+            <View
+                android:id="@+id/view"
+                android:layout_width="wrap_content"
+                android:layout_height="130dp"
+                android:background="#ffffff"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:id="@+id/itemDescription"
-                android:layout_margin="10dp"
-                android:layout_weight=".3"
-                android:layout_width="match_parent"
-                android:layout_height="0dp" />
+                android:text="@{item.description}"
+                android:textColor="#686868"
+                android:id="@+id/descriptionTextView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                tools:text="Tikriausiai dar pamenate netikėtą tunelių kasybos kompanijos „The Boring Company“ marketingo triuką, kai Elonas Muskas paskelbė apie 20 tūkstančių parduodamų liepsnosvaidžių. Žmones šiuos žaislus tiesiog graibstė,nors buvo ir tokių, kurie stebėjosi šio į ginklą panašau" />
 
-        </LinearLayout>
+            <TextView
+                android:text="@{item.title}"
+                android:id="@+id/titleTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:textAlignment="center"
+                android:textColor="#fff"
+                android:textSize="25sp"
+                app:layout_constraintBottom_toTopOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Title" />
+
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profileImg"
-        android:elevation="5dp"
-        android:src="@drawable/ic_launcher_background"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="80dp"
-        android:layout_height="80dp" />
-
-</FrameLayout>
-
+</layout>

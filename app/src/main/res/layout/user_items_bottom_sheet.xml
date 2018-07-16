@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="app.swapper.com.swapper.ui.viewmodel.UserItemViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        android:id="@+id/bottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <android.support.v7.widget.CardView
+            app:cardElevation="20dp"
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/userGalleryRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="@+id/cardView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cardView"
+            app:recyclerViewHorizontalViewModel="@{vm}" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/userGalleryRecyclerView"
+            app:layout_constraintEnd_toEndOf="@+id/userGalleryRecyclerView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/userGalleryRecyclerView" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

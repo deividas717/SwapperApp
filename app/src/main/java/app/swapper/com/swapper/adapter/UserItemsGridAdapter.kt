@@ -65,7 +65,7 @@ class UserItemsGridAdapter: RecyclerView.Adapter<UserItemsGridAdapter.DataBindin
     inner class DataBindingViewHolder(val viewBinding: UserGalleryDetailItemBinding) : RecyclerView.ViewHolder(viewBinding.root) {
         init {
             viewBinding.squareView.setOnClickListener({
-                val fadeIn: ScaleAnimation = ScaleAnimation(1f, 0.8f, 1f, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+                val fadeIn = ScaleAnimation(1f, 0.8f, 1f, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
                 val fadeOut = ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
                 fadeIn.duration = 100
                 fadeIn.fillAfter = true
@@ -75,13 +75,10 @@ class UserItemsGridAdapter: RecyclerView.Adapter<UserItemsGridAdapter.DataBindin
                 if (data!![adapterPosition].id in selectedItems) {
                     selectedItems.remove(data!![adapterPosition].id)
                     it.startAnimation(fadeOut)
-                    Log.d("SADFSSDSD", "yra");
                 } else {
-                    Log.d("SADFSSDSD", "nera");
                     selectedItems.add(data!![adapterPosition].id)
                     it.startAnimation(fadeIn)
                 }
-                Log.d("ASDUGASDSd", viewBinding.squareView.toString())
             })
         }
     }

@@ -23,6 +23,7 @@
             tools:context=".ui.activity.MainActivity">
 
             <include
+                android:id="@+id/content"
                 layout="@layout/content_main"
                 app:vm="@{vm}" />
 
@@ -32,6 +33,18 @@
                 app:srcCompat="@drawable/ic_menu_black_24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:onClick="showPopup"
+                android:id="@+id/modeBtn"
+                android:padding="20dp"
+                android:tint="@android:color/white"
+                style="?android:attr/actionOverflowButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_anchor="@+id/content"
+                app:layout_anchorGravity="right|top"
+                android:contentDescription="Mode switch" />
 
         </android.support.design.widget.CoordinatorLayout>
 

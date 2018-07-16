@@ -3,6 +3,9 @@ package app.swapper.com.swapper.ui.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.location.Location
+import android.util.Log
+import app.swapper.com.swapper.LocationData
+import app.swapper.com.swapper.TradeType
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.networking.ApiService
@@ -11,6 +14,8 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 /**
  * Created by Deividas on 2018-04-25.
@@ -19,18 +24,20 @@ class SwipeViewModel(val user: User?, private val service: ApiService?) : ViewMo
     private var currentItem = 0
     private var allReceivedData : MutableList<Item> = mutableListOf()
     val data = MutableLiveData<List<Item>>()
-    private var location: Location? = null
+    var location: Location? = null
+
+    var tradeType: TradeType = TradeType.SWAP
+        set(value) {
+           field = value
+            allReceivedData.clear()
+            getMoreCards()
+        }
 
     private fun getMoreCards() {
-        val downloadedIds = allReceivedData.map { it.id }.toList()
         Utils.ifNotNull(location, user) { location, user ->
             run {
-                val result = if (downloadedIds.isEmpty()) {
-                    service?.getNearestItems(user.email, location.latitude, location.longitude)
-                } else {
-                    service?.getNearestItems(user.email, location.latitude, location.longitude, downloadedIds)
-                }
-
+                val downloadedIds = allReceivedData.map { it.id }.toList()
+                val result = service?.getNearestItems(user.email, location.latitude, location.longitude, downloadedIds)
                 result?.enqueue(object : Callback<List<Item>> {
                     override fun onResponse(call: Call<List<Item>>?, response: Response<List<Item>>?) {
                         response.let {
@@ -98,5 +105,27 @@ class SwipeViewModel(val user: User?, private val service: ApiService?) : ViewMo
                 })
             }
         }
+    }
+
+    fun getDistance(lat: Double, lng: Double) : String? {
+        return location?.let {
+            val itemLocation = Location("ItemLocation")
+            itemLocation.latitude = lat
+            itemLocation.longitude = lng
+            val distance = it.distanceTo(itemLocation)
+            formatNumber(distance)
+        } ?: run {
+            null
+        }
+    }
+
+    private fun formatNumber(distance: Float): String {
+        var distance = distance
+        var unit = "m"
+        if (distance > 1000) {
+            distance /= 1000.0.toFloat()
+            unit = "km"
+        }
+        return String.format("%4.3f%s", distance, unit)
     }
 }

@@ -9,7 +9,6 @@ import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.FbToken
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.networking.ApiService
-import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import com.facebook.GraphRequest
 import com.facebook.login.LoginResult
@@ -29,7 +28,6 @@ class LoginViewModel(private val prefs: SharedPreferencesManager, private val ap
 
     fun loginManagerSuccess(loginResult: LoginResult) {
         val request = GraphRequest.newMeRequest(loginResult.accessToken) { jsonObj, _ ->
-            Log.d("sdfuisdfsdf", loginResult.accessToken.token.toString())
             val fbToken = FbToken(loginResult.accessToken.token)
             getAccessToken(fbToken, jsonObj)
         }
@@ -73,8 +71,6 @@ class LoginViewModel(private val prefs: SharedPreferencesManager, private val ap
         prefs.saveAccessToken(accessToken)
 
         FirebaseMessaging.getInstance().subscribeToTopic(serveUserId.toString())
-
-        GlideLoader.accessToken = accessToken.accessToken
 
         status.value = LoginStatus.SUCCESS
     }

@@ -4,17 +4,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageView
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.databinding.ActivityDetailItemBinding
-import app.swapper.com.swapper.networking.GlideLoader
-import app.swapper.com.swapper.ui.factory.DetailItemViewModelFactory
+import app.swapper.com.swapper.ui.viewmodel.factory.DetailItemViewModelFactory
 import app.swapper.com.swapper.ui.viewmodel.DetailItemViewModel
 import app.swapper.com.swapper.utils.Constants
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_detail_item.*
 import kotlinx.android.synthetic.main.content_detail_item.*
 import com.synnapps.carouselview.ImageListener
@@ -26,7 +23,7 @@ class DetailItemActivity : BaseActivity() {
     private val data = mutableListOf<String>()
 
     private var imageListener: ImageListener = ImageListener { position, imageView ->
-        GlideLoader.loadFromApi(this, imageView, Constants.serverAddress + "api/image" + File.separator + data[position])
+        Glide.with(applicationContext).load(Constants.serverAddress + "api/image" + File.separator + data[position]).into(imageView)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

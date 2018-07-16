@@ -79,11 +79,6 @@
 
                 </RelativeLayout>
 
-                <TextView
-                    android:text="Other users items"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
                 <!--<android.support.v7.widget.RecyclerView-->
                     <!--app:otherUserItemRecyclerViewModel="@{vm}"-->
                     <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->

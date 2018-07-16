@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/popup_menu_swap"
+        android:title="Swap"/>
+
+    <item
+        android:id="@+id/popup_menu_buy"
+        android:title="Buy"/>
+
+    <item
+        android:id="@+id/popup_menu_all"
+        android:title="All"/>
+
+</menu>

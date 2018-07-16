@@ -1,11 +1,11 @@
 package app.swapper.com.swapper.networking
 
+import app.swapper.com.swapper.TradeType
 import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.FbToken
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.UserData
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -24,10 +24,7 @@ interface ApiService {
                         @Path("lng") lng : Double,
                         @Query("downloadedIds") downloadedIds : List<Long>): Call<List<Item>>
 
-    @GET("api/nearestItems/{email}/{lat}/{lng}")
-    fun getNearestItems(@Path("email") email : String,
-                        @Path("lat") lat : Double,
-                        @Path("lng") lng : Double): Call<List<Item>>
+
 
     @POST("api/createNewItem")
     fun createNewItem(@Body item : Item) : Call<Item>
@@ -63,4 +60,10 @@ interface ApiService {
 
     @POST("api/markItemAsAlreadySeen/{itemId}/{userId}")
     fun markItemAsAlreadySeen(@Path("itemId") itemId : Long, @Path("userId") userId : Long) : Call<ResponseBody>
+
+    @GET("api/user/getUserHistoryItems/{email}/{since}/{perPage}")
+    fun getUserHistoryItems(@Path("email") email : String, @Path("since") since : Long, @Path("perPage") perPage : Int) : Call<List<Item?>?>
+
+    @HTTP(method = "DELETE", hasBody = true, path = "api/deleteUserHistoryItems/{userId}")
+    fun deleteUserHistoryItems(@Path("userId") userId: Long, @Body numbers: MutableList<Long?>) : Call<ResponseBody>
 }

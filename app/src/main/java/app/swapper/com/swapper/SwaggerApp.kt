@@ -6,7 +6,6 @@ import android.text.TextUtils
 import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.networking.ApiService
-import app.swapper.com.swapper.networking.GlideLoader
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
@@ -43,8 +42,6 @@ class SwaggerApp : Application() {
             FirebaseMessaging.getInstance().subscribeToTopic(user.userId.toString())
         }
 
-        GlideLoader.accessToken = getAccessToken()?.accessToken
-
         AppVisibilityDetector.init(this@SwaggerApp, object : AppVisibilityCallback {
             override fun onAppGotoForeground() {
                 //app is from background to foreground
@@ -66,7 +63,6 @@ class SwaggerApp : Application() {
 
     fun getRetrofit() : ApiService? {
         val token = getAccessToken()?.accessToken
-        XLog.st(5).d("ASDUIASDSD ${service == null} test ${TextUtils.isEmpty(token)}")
         if (service == null || isHeaderEmpty) {
             val client = OkHttpClient.Builder()
                     .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
