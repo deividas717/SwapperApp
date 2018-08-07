@@ -70,17 +70,7 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
     fun sendItemExchangeRequest(itemId: Long) {
         if (itemId == -1L || user == null) return
 
-        when (adapter.state) {
-            State.SEND -> {
-                sendSelectedIds(itemId, user.userId, adapter.selectedItemsId, false)
-            }
-            State.DELETE -> {
-                deleteSelectedItemIds(itemId, user.userId, adapter.selectedItemsId)
-            }
-            State.EDIT -> {
-                sendSelectedIds(itemId, user.userId, adapter.selectedItemsId, true)
-            }
-        }
+        sendSelectedIds(itemId, user.userId, adapter.selectedItemsId, false)
     }
 
     private fun sendSelectedIds(itemId: Long, userId: Long, selectedIds: List<Long>, isEdit: Boolean) {
@@ -90,13 +80,6 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
             call?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>?) {
                     if (response != null && response.isSuccessful) {
-                        if (isEdit) {
-                            adapter.state = State.EDIT
-                            state.value = State.EDIT
-                        } else {
-                            adapter.state = State.DELETE
-                            state.value = State.DELETE
-                        }
                         adapter.changeSelectedItemsBackground()
                         isExecutingRequest.value = false
                     }
@@ -104,7 +87,7 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable?) {
                     isExecutingRequest.value = false
-                    resetAllSelectableStates()
+                    //resetAllSelectableStates()
                 }
             })
         }
@@ -117,7 +100,6 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
             call?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>?) {
                     if (response != null && response.isSuccessful) {
-                        adapter.state = State.EDIT
                         state.value = State.EDIT
                         isExecutingRequest.value = false
                         adapter.changeSelectedItemsBackground()
@@ -126,14 +108,13 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable?) {
                     isExecutingRequest.value = false
-                    resetAllSelectableStates()
+                    // resetAllSelectableStates()
                 }
             })
         }
     }
 
     fun resetAllSelectableStates() {
-        adapter.state = State.SEND
         state.value = State.SEND
         adapter.resetAllSelectableStates()
     }
@@ -142,7 +123,7 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
         Utils.ifNotNull(location, user) { location, user ->
             run {
                 val downloadedIds = allReceivedData.map { it.id }.toList()
-                val result = service?.getNearestItems(user.email, 54.8551, 27.455455, downloadedIds)
+                val result = service?.getNearestItems(user.email, location.latitude, location.longitude, downloadedIds)
                 result?.enqueue(object : Callback<List<Item>> {
                     override fun onResponse(call: Call<List<Item>>?, response: Response<List<Item>>?) {
                         response.let {
@@ -165,7 +146,6 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
 
     private fun changeCurrentItemIndex(increase : Boolean) {
         if (increase) {
-            Log.d("ASDGIUSDGUSDd", "$currentItem")
             if (allReceivedData.size > currentItem) {
                 markCardAsAlreadySeen(allReceivedData[currentItem].id)
                 currentItem = currentItem.plus(1)

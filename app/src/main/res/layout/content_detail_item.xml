@@ -1,4 +1,4 @@
-<layout
+<layout xmlns:tools="http://schemas.android.com/tools"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -18,21 +18,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
                 <RelativeLayout
                     android:id="@+id/imageLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp">
+                    android:layout_height="250dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <ProgressBar
-                        android:visibility="@{itemData.loadingImages ? View.VISIBLE : View.GONE}"
-                        android:padding="80dp"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:padding="80dp"
+                        android:visibility="@{itemData.loadingImages ? View.VISIBLE : View.GONE}" />
 
                     <com.synnapps.carouselview.CarouselView
                         android:id="@+id/carouselView"
@@ -43,41 +46,82 @@
                         app:radius="6dp"
                         app:slideInterval="3000"
                         app:strokeColor="#FF777777"
-                        app:strokeWidth="1dp"/>
+                        app:strokeWidth="1dp" />
 
                 </RelativeLayout>
 
                 <TextView
-                    android:layout_marginTop="20dp"
-                    android:textSize="18sp"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
+                    android:id="@+id/textView3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
                     android:text="@{itemData.title}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageLayout"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <RelativeLayout
-                    android:layout_marginTop="15dp"
                     android:id="@+id/viewB"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView3">
 
                     <ProgressBar
-                        android:visibility="@{itemData.description == null ? View.VISIBLE : View.GONE}"
-                        android:layout_centerHorizontal="true"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="true"
+                        android:visibility="@{itemData.description == null ? View.VISIBLE : View.GONE}" />
 
                     <TextView
                         android:id="@+id/descriptionTextView"
-                        android:text="@{itemData.description}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"/>
+                        android:text="@{itemData.description}" />
 
                 </RelativeLayout>
+
+                <android.support.v7.widget.AppCompatImageView
+                    app:srcCompat="@color/colorPrimary"
+                    android:id="@+id/appCompatImageView2"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/viewB"
+                    tools:src="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/ownerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
+                    app:layout_constraintStart_toEndOf="@+id/appCompatImageView2"
+                    app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
+                    tools:text="Deividas Aukstakalnis" />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="#_See all"
+                    app:layout_constraintBottom_toBottomOf="@+id/ownerName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/ownerName" />
 
                 <!--<android.support.v7.widget.RecyclerView-->
                     <!--app:otherUserItemRecyclerViewModel="@{vm}"-->
@@ -86,7 +130,7 @@
                     <!--android:layout_width="match_parent"-->
                     <!--android:layout_height="wrap_content" />-->
 
-            </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
 
         </android.support.v4.widget.NestedScrollView>
 

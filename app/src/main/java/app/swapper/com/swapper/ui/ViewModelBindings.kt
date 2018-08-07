@@ -57,6 +57,7 @@ object ViewModelBindings {
     @JvmStatic
     @BindingAdapter("loadImage")
     fun loadImage(view: ImageView, item: Item) {
+        Log.d("ADUISDSDSD", "${item.id} ${item.title}")
         item.images?.let {
             if (it.isNotEmpty()) {
                 val requestOptions = RequestOptions()
@@ -95,6 +96,7 @@ object ViewModelBindings {
             df.roundingMode = RoundingMode.CEILING
             val extension = if (distance < 1) "m" else "km"
             view.text = "${df.format(distance)} $extension"
+            Log.d("ASDUISDSsd", "${df.format(distance)} $extension}")
             view.visibility = View.VISIBLE
         } else {
             view.visibility = View.GONE

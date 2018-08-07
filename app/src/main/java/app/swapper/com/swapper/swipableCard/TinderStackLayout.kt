@@ -2,12 +2,15 @@ package app.swapper.com.swapper.swipableCard
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.EventLog
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnticipateOvershootInterpolator
 import android.widget.FrameLayout
+import app.swapper.com.swapper.events.OnCardClickedEvent
 import app.swapper.com.swapper.utils.DisplayUtils
+import org.greenrobot.eventbus.EventBus
 import rx.android.schedulers.AndroidSchedulers
 import rx.functions.Action1
 import rx.subjects.PublishSubject
@@ -18,6 +21,9 @@ class TinderStackLayout : FrameLayout {
     private var compositeSubscription: CompositeSubscription? = null
     private var screenWidth: Int = 0
     private var yMultiplier: Int = 0
+
+    private var canClick = true
+
     // endregion
 
     // region Constructors
@@ -59,6 +65,10 @@ class TinderStackLayout : FrameLayout {
         compositeSubscription = CompositeSubscription()
 
         setUpRxBusSubscription()
+
+        setOnClickListener {
+            Log.d("SDIOASDSD", "sadfhkjshkdfdf")
+        }
     }
 
     private fun setUpRxBusSubscription() {
@@ -71,6 +81,7 @@ class TinderStackLayout : FrameLayout {
 
                     if (event is TopCardMovedEvent) {
                         val posX = event.posX
+                        canClick = posX == 0f
 
                         val childCount = childCount
                         for (i in childCount - 2 downTo 0) {
@@ -87,6 +98,12 @@ class TinderStackLayout : FrameLayout {
                                         .setInterpolator(AnticipateOvershootInterpolator()).duration = DURATION.toLong()
                             }
                         }
+                    } else if (event is TopCardMoveUpEvent) {
+                        val posX = event.posX
+
+                        if (Math.abs(posX) <= 15) {
+                            EventBus.getDefault().post(OnCardClickedEvent(getTopCard().id))
+                        }
                     }
                 })
 
@@ -96,7 +113,6 @@ class TinderStackLayout : FrameLayout {
     fun addCard(tc: TinderCardView) {
         val layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
-        val childCount = childCount
         addView(tc, 0, layoutParams)
 
         val scaleValue = 1 - childCount / 50.0f
@@ -106,6 +122,14 @@ class TinderStackLayout : FrameLayout {
                 .y((childCount * yMultiplier).toFloat())
                 .scaleX(scaleValue)
                 .setInterpolator(AnticipateOvershootInterpolator()).duration = DURATION.toLong()
+    }
+
+    private fun getTopCard(): TinderCardView {
+        return getChildAt(childCount - 1) as TinderCardView
+    }
+
+    fun enableSwipeForCard(enableSwipeToRight: Boolean) {
+        getTopCard().canBeSwipedToRight = enableSwipeToRight
     }
 
     companion object {

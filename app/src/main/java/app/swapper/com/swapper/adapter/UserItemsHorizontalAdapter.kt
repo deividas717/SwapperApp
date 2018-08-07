@@ -28,25 +28,11 @@ class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapt
     val selectedItems: ObservableArrayList<Int> = ObservableArrayList()
     val selectedItemsTest: ObservableArrayList<Int> = ObservableArrayList()
 
-    var state: State = State.SEND
-        set(value)  {
-            field = value
-            if (value == State.EDIT) {
-                Log.d("ASDUASDSDSd", "ATNAUJINAMA " + selectedItemsTest.size + " " + selectedItems.size)
-                selectedItems.removeAll(selectedItemsTest)
-
-                selectedItems.forEach {
-                    Log.d("ASDUASDSDSd", "selectedItems " + it)
-                }
-            }
-            selectedItemsTest.clear()
-        }
-
     val selectedItemsId: List<Long>
         get() {
             val list = mutableListOf<Long>()
             data?.let { item ->
-                val collection = if (state != State.SEND) selectedItemsTest else selectedItems
+                val collection = selectedItems
                 collection.forEach {
                     list.add(item[it].id)
                 }
@@ -79,59 +65,17 @@ class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapt
         data?.let {
             viewHolder.viewBinding.userItem = it[position]
             viewHolder.viewBinding.executePendingBindings()
-
-//            when (state) {
-//                State.EDIT -> {
-//                    val isExistInMainCollection = position in selectedItems
-//                    if (isExistInMainCollection) {
-//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
-//                        viewHolder.viewBinding.rootLayout.background = null
-//                    } else {
-//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
-//                        viewHolder.viewBinding.rootLayout.background = null
-//                    }
-//
-//                    val isExistInSecondCollection = position in selectedItemsTest
-//                    if (isExistInSecondCollection) {
-//                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
-//                    } else {
-//                        viewHolder.viewBinding.rootLayout.background = null
-//                    }
-//                }
-//                State.DELETE -> {
-//                    val isExistInMainCollection = isExist(position, selectedItems)
-//                    if (!isExistInMainCollection) {
-//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.VISIBLE
-//                        viewHolder.viewBinding.rootLayout.background = null
-//                    } else {
-//                        viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
-//                        viewHolder.viewBinding.rootLayout.background = null
-//                    }
-//                    val isExistInSecondCollection = isExist(position, selectedItemsTest)
-//                    if (isExistInSecondCollection) {
-//                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.unselect_shadow)
-//                    } else {
-//                        viewHolder.viewBinding.rootLayout.background = null
-//                    }
-//                }
-//                State.SEND -> {
-//                    val isExistInMainCollection = isExist(position, selectedItems)
-//                    if (isExistInMainCollection) {
-//                        viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
-//                    } else {
-//                        viewHolder.viewBinding.rootLayout.background = null
-//                    }
-//                    viewHolder.viewBinding.rootLayout.foregroundImg.visibility = View.GONE
-//                }
-//            }
+            val isExistInMainCollection = position in selectedItems
+            if (isExistInMainCollection) {
+                viewHolder.viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
+            } else {
+                viewHolder.viewBinding.rootLayout.background = null
+            }
         }
     }
 
     override fun getItemCount(): Int {
-        data?.let {
-            return it.size
-        }
-        return 0
+        return data?.size ?: 0
     }
 
     private fun isExist(position : Int, collection: List<Int>) : Boolean {
@@ -142,75 +86,27 @@ class UserItemsHorizontalAdapter : RecyclerView.Adapter<UserItemsHorizontalAdapt
         if (selectedItems.isNotEmpty()) {
             selectedItems.clear()
             notifyDataSetChanged()
-            updateFabColor(null)
         }
     }
 
     fun changeSelectedItemsBackground() {
         notifyDataSetChanged()
-        updateFabColor(null)
+       // updateFabColor(null)
     }
 
     inner class DataBindingViewHolder(val viewBinding: UserGalleryItemBinding) : RecyclerView.ViewHolder(viewBinding.root) {
         init {
             viewBinding.userGalleryCard.setOnClickListener {
-                when (state) {
-                    State.EDIT -> {
-                        val isExistInMainCollection = isExist(adapterPosition, selectedItems)
-                        if (isExistInMainCollection) return@setOnClickListener
-
-                        val isExistInSecondCollection = isExist(adapterPosition, selectedItemsTest)
-
-                        //if (isExistInSecondCollection) return@setOnClickListener
-
-                        if (isExistInSecondCollection) {
-                            selectedItemsTest.remove(adapterPosition)
-                            viewBinding.rootLayout.background = null
-
-                        } else {
-                            selectedItemsTest.add(adapterPosition)
-                            viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
-                        }
-
-                        updateFabColor(selectedItemsTest)
-                    }
-                    State.DELETE -> {
-                        val isExistInMainCollection = isExist(adapterPosition, selectedItems)
-                        if (!isExistInMainCollection) return@setOnClickListener
-
-                        val isExistInSecondCollection = isExist(adapterPosition, selectedItemsTest)
-
-                        if (isExistInSecondCollection) {
-                            selectedItemsTest.remove(adapterPosition)
-                            viewBinding.rootLayout.background = null
-                        } else {
-                            selectedItemsTest.add(adapterPosition)
-                            viewBinding.rootLayout.setBackgroundResource(R.drawable.unselect_shadow)
-                        }
-
-                        updateFabColor(selectedItemsTest)
-                    }
-                    State.SEND -> {
-                        if (isExist(adapterPosition, selectedItems)) {
-                            selectedItems.remove(adapterPosition)
-                            viewBinding.rootLayout.background = null
-                        } else {
-                            selectedItems.add(adapterPosition)
-                            viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
-                        }
-
-                        updateFabColor(selectedItems)
-                    }
+                val isExistInMainCollection = isExist(adapterPosition, selectedItems)
+                if (isExistInMainCollection) {
+                    selectedItems.remove(adapterPosition)
+                    viewBinding.rootLayout.background = null
+                } else {
+                    selectedItems.add(adapterPosition)
+                    viewBinding.rootLayout.setBackgroundResource(R.drawable.select_shadow)
                 }
+                EventBus.getDefault().post(SelectionEvent(selectedItems.isNotEmpty()))
             }
         }
-    }
-
-    private fun updateFabColor(collection: ObservableArrayList<Int>?) {
-        if (collection == null) {
-            EventBus.getDefault().post(SelectionEvent(true, state))
-            return
-        }
-        EventBus.getDefault().post(SelectionEvent(collection.isEmpty(), state))
     }
 }

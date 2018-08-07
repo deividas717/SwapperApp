@@ -10,10 +10,18 @@
         <variable
             name="item"
             type="app.swapper.com.swapper.dto.Item" />
+
+        <variable
+            name="location"
+            type="android.location.Location" />
     </data>
 
     <android.support.v7.widget.CardView
-        android:layout_margin="24dp"
+        android:id="@+id/cardLayout"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardUseCompatPadding="true"
@@ -50,6 +58,7 @@
                 android:id="@+id/view"
                 android:layout_width="wrap_content"
                 android:layout_height="130dp"
+                android:layout_marginEnd="8dp"
                 android:background="#ffffff"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -57,19 +66,21 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:text="@{item.description}"
-                android:textColor="#686868"
+                android:maxLines="5"
+                android:ellipsize="end"
                 android:id="@+id/descriptionTextView"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
+                android:text="@{item.description}"
+                android:textColor="#686868"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintTop_toBottomOf="@+id/imageView"
                 tools:text="Tikriausiai dar pamenate netikėtą tunelių kasybos kompanijos „The Boring Company“ marketingo triuką, kai Elonas Muskas paskelbė apie 20 tūkstančių parduodamų liepsnosvaidžių. Žmones šiuos žaislus tiesiog graibstė,nors buvo ir tokių, kurie stebėjosi šio į ginklą panašau" />
 
             <TextView
@@ -87,6 +98,61 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Title" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/imageView"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:srcCompat="@drawable/ic_place_black_24dp" />
+
+            <TextView
+                app:item="@{item}"
+                app:phoneLocation="@{location}"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="@+id/imageView"
+                tools:text="10.8 km" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView"
+                android:layout_width="20dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView"
+                app:layout_constraintEnd_toStartOf="@+id/textView"
+                app:layout_constraintTop_toTopOf="@+id/textView"
+                app:srcCompat="@drawable/ic_people_black_24dp" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageView"
+                tools:text="8" />
+
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/likeTextView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:alpha="0"
+                app:layout_constraintBottom_toBottomOf="@+id/titleTextView"
+                app:layout_constraintEnd_toEndOf="@+id/itemImage"
+                app:layout_constraintStart_toStartOf="@+id/itemImage"
+                app:layout_constraintTop_toTopOf="parent"
+                card_view:srcCompat="@drawable/ic_star_black_24dp" />
 
         </android.support.constraint.ConstraintLayout>
 

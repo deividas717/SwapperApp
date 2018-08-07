@@ -1,87 +1,18 @@
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="vm"
             type="app.swapper.com.swapper.ui.viewmodel.UserItemViewModel" />
     </data>
 
-    <!--<android.support.design.widget.CoordinatorLayout-->
-        <!--android:background="@drawable/login_background"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <!--<LinearLayout-->
-            <!--android:orientation="vertical"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-            <!--<fragment-->
-                <!--android:layout_weight=".83"-->
-                <!--android:id="@+id/swipeFragment"-->
-                <!--class="app.swapper.com.swapper.ui.fragment.SwipeFragment"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp" />-->
-
-            <!--<RelativeLayout-->
-                <!--android:layout_weight=".17"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp">-->
-
-                <!--<android.support.v7.widget.CardView-->
-                    <!--android:id="@+id/cardView"-->
-                    <!--app:cardElevation="20dp"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent">-->
-
-                    <!--<android.support.v7.widget.RecyclerView-->
-                        <!--android:orientation="horizontal"-->
-                        <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
-                        <!--app:recyclerViewHorizontalViewModel="@{vm}"-->
-                        <!--android:scrollbars="horizontal"-->
-                        <!--android:id="@+id/userGalleryRecyclerView"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content" />-->
-
-                    <!--<RelativeLayout-->
-                        <!--android:background="#00ffffff"-->
-                        <!--android:visibility="gone"-->
-                        <!--android:id="@+id/blurView"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent">-->
-
-                        <!--<ProgressBar-->
-                            <!--android:layout_centerInParent="true"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="match_parent" />-->
-
-                    <!--</RelativeLayout>-->
-
-                <!--</android.support.v7.widget.CardView>-->
-
-            <!--</RelativeLayout>-->
-
-        <!--</LinearLayout>-->
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--app:srcCompat="@drawable/ic_send"-->
-            <!--android:layout_margin="15dp"-->
-            <!--app:layout_anchor="@id/swipeFragment"-->
-            <!--app:layout_anchorGravity="bottom|right|end"-->
-            <!--app:fabVisibilityAnim="@{vm.getAdapter().selectedItems}"-->
-            <!--android:id="@+id/sendBtn"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content" />-->
-
-    <!--</android.support.design.widget.CoordinatorLayout>-->
-
     <android.support.constraint.ConstraintLayout
-        android:background="@drawable/login_background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/login_background">
 
         <ProgressBar
             android:id="@+id/cardsProgressBar"
@@ -100,24 +31,58 @@
             android:id="@+id/cardStackView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
+            app:layout_constraintBottom_toTopOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/coordinatorLayout"
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <include
-                app:vm="@{vm}"
-                layout="@layout/user_items_bottom_sheet" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        </android.support.design.widget.CoordinatorLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/userGalleryRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:scrollbars="horizontal"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:recyclerViewHorizontalViewModel="@{vm}" />
+
+                <ProgressBar
+                    android:id="@+id/userItemsProgressbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/userGalleryRecyclerView"
+                    app:layout_constraintEnd_toEndOf="@+id/userGalleryRecyclerView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/userGalleryRecyclerView" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <View
+            android:id="@+id/errorShadow"
+            android:visibility="invisible"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_red_shadow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

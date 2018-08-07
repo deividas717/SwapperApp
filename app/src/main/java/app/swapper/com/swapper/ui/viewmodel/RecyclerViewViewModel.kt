@@ -6,7 +6,9 @@ import android.util.Log
 import app.swapper.com.swapper.adapter.DataPresenterInterface
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.dto.UserData
+import app.swapper.com.swapper.events.OnUserDataLoaded
 import app.swapper.com.swapper.networking.ApiService
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,12 +31,11 @@ abstract class RecyclerViewViewModel<out T : RecyclerView.Adapter<*>>(private va
                 override fun onResponse(call: Call<UserData>?, response: Response<UserData>?) {
                     response?.let {
                         if (response.isSuccessful) {
+                            EventBus.getDefault().post(OnUserDataLoaded())
                             val userItems = response.body()
                             userItems?.let {
                                 (getAdapter() as DataPresenterInterface).setDataList(it.items)
                             }
-                        } else {
-                            Log.d("ASDSUIADSDS", "response not success")
                         }
                     }
                 }

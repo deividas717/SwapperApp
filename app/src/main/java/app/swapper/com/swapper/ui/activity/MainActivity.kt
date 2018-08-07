@@ -8,7 +8,6 @@ import android.databinding.DataBindingUtil
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
@@ -25,9 +24,7 @@ import app.swapper.com.swapper.SwaggerApp
 import app.swapper.com.swapper.databinding.ActivityMainBinding
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
-import app.swapper.com.swapper.events.LocationChangeEvent
-import app.swapper.com.swapper.events.OnCardDismissedEvent
-import app.swapper.com.swapper.events.SelectionEvent
+import app.swapper.com.swapper.events.*
 import app.swapper.com.swapper.service.LocationService
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.swipableCard.TinderCardView
@@ -36,14 +33,10 @@ import app.swapper.com.swapper.ui.viewmodel.UserItemViewModel
 import app.swapper.com.swapper.ui.viewmodel.factory.MainActivityViewModelFactory
 import app.swapper.com.swapper.ui.viewmodel.factory.UserItemViewModelFactory
 import com.bumptech.glide.Glide
-import com.elvishew.xlog.XLog
 import com.facebook.AccessToken
-import org.greenrobot.eventbus.Subscribe
-import rx.Subscriber
-import rx.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.user_items_bottom_sheet.*
+import org.greenrobot.eventbus.Subscribe
 
 class MainActivity : BaseActivity(),
         NavigationView.OnNavigationItemSelectedListener {
@@ -83,33 +76,11 @@ class MainActivity : BaseActivity(),
             }
         }
 
-       cardStackView.publishSubject.observeOn(AndroidSchedulers.mainThread()).subscribe(object : Subscriber<Int>() {
-           override fun onNext(index: Int) {
-
-           }
-
-           override fun onCompleted() {
-
-           }
-
-           override fun onError(e: Throwable?) {
-
-           }
-       })
-
         userViewModel.data.observe(this, android.arch.lifecycle.Observer { it?.let { handleData(it) } })
 
         nav_view.setNavigationItemSelectedListener(this)
 
         setUpHeaderData(nav_view.getHeaderView(0))
-
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        //bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        bottomSheetBehavior.peekHeight = 340
-        bottomSheetBehavior.isHideable = true
     }
 
     private fun handleData(data: List<Item>) {
@@ -143,12 +114,10 @@ class MainActivity : BaseActivity(),
         popup.show()
     }
 
-    var counter = 0
     private fun addCards(cardsLeft: Int = 0, cardDismissed: Boolean = true) {
-        counter++
-        val test = userViewModel.indexData(cardsLeft, cardDismissed)
-        test?.forEach {
-            cardStackView.addCard(TinderCardView(this, it))
+        val displayData = userViewModel.indexData(cardsLeft, cardDismissed)
+        displayData?.forEach {
+            cardStackView.addCard(TinderCardView(this, it, location))
         }
     }
 
@@ -163,6 +132,24 @@ class MainActivity : BaseActivity(),
     @Subscribe
     fun onCardDismissedEvent(obj: OnCardDismissedEvent) {
         addCards(obj.count)
+        userViewModel.resetAllSelectableStates()
+
+//        val intent = Intent()
+//        intent.action = Intent.ACTION_VIEW
+//        intent.`package` = "com.facebook.orca"
+//        intent.data = Uri.parse("https://m.me/" + "4")
+//        startActivity(intent)
+
+    }
+
+    @Subscribe
+    fun onUserDataLoaded(obj: OnUserDataLoaded) {
+        userItemsProgressbar.visibility = View.GONE
+    }
+
+    @Subscribe
+    fun onCardClickedEvent(obj: OnCardClickedEvent) {
+        startActivity(DetailItemActivity.createNewIntent(applicationContext, obj.itemId))
     }
 
     private fun setUpHeaderData( navHeader: View) {
@@ -222,10 +209,6 @@ class MainActivity : BaseActivity(),
         }
     }
 
-    fun resetAllSelectableStates() {
-        userViewModel.resetAllSelectableStates()
-    }
-
     private fun handleDialogVisibility(state: State) {
 //        if (show) {
 //            val dialogFragment = MatchDialog()
@@ -250,20 +233,16 @@ class MainActivity : BaseActivity(),
 
     @Subscribe
     fun onUserClickOnHisItems(obj: SelectionEvent) {
-//        var color = ColorStateList.valueOf(Color.GRAY)
-//        color = when (obj.state) {
-//            State.DELETE -> {
-//                if (!obj.isEmpty) { ColorStateList.valueOf(Color.RED) } else { color }
-//            }
-//            State.EDIT -> {
-//                if (!obj.isEmpty) { ColorStateList.valueOf(Color.GREEN) } else { color }
-//            }
-//            State.SEND -> {
-//                ColorStateList.valueOf(Color.BLUE)
-//            }
-//        }
+        cardStackView.enableSwipeForCard(obj.isEmpty)
+    }
 
-        //sendBtn.backgroundTintList = color
+    @Subscribe
+    fun cardSwipeEvent(obj: CardSwipeAction) {
+        if (obj.showShadow) {
+            errorShadow.visibility = View.VISIBLE
+        } else {
+            errorShadow.visibility = View.GONE
+        }
     }
 
     private fun logoutDialog() {
