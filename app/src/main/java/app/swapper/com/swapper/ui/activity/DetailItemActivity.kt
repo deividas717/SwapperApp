@@ -6,7 +6,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import app.swapper.com.swapper.R
-import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.databinding.ActivityDetailItemBinding
 import app.swapper.com.swapper.ui.viewmodel.factory.DetailItemViewModelFactory
 import app.swapper.com.swapper.ui.viewmodel.DetailItemViewModel
@@ -29,7 +29,7 @@ class DetailItemActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val swaggerApp = application as SwaggerApp
+        val swaggerApp = application as SwapperApp
         val apiService = swaggerApp.getRetrofit()
 
         viewModel = ViewModelProviders.of(this, DetailItemViewModelFactory(apiService)).get(DetailItemViewModel::class.java)

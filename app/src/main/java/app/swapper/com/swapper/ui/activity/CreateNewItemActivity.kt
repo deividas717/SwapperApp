@@ -13,7 +13,7 @@ import android.support.v4.content.FileProvider
 import app.swapper.com.swapper.ui.viewmodel.factory.CreateNewItemViewModelFactory
 import app.swapper.com.swapper.LocationData
 import app.swapper.com.swapper.R
-import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.TradeType
 import app.swapper.com.swapper.utils.Utils
 import app.swapper.com.swapper.databinding.ActivityCreateNewItemBinding
@@ -42,7 +42,7 @@ class CreateNewItemActivity : BaseActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(true);
         }
 
-        val swaggerApp = application as SwaggerApp
+        val swaggerApp = application as SwapperApp
         val apiService = swaggerApp.getRetrofit()
         user = swaggerApp.getUser()
 

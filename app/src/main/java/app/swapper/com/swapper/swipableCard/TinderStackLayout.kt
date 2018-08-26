@@ -65,10 +65,6 @@ class TinderStackLayout : FrameLayout {
         compositeSubscription = CompositeSubscription()
 
         setUpRxBusSubscription()
-
-        setOnClickListener {
-            Log.d("SDIOASDSD", "sadfhkjshkdfdf")
-        }
     }
 
     private fun setUpRxBusSubscription() {
@@ -100,8 +96,9 @@ class TinderStackLayout : FrameLayout {
                         }
                     } else if (event is TopCardMoveUpEvent) {
                         val posX = event.posX
+                        val posY = event.posY
 
-                        if (Math.abs(posX) <= 15) {
+                        if (Math.abs(posX) <= 15 && Math.abs(posY) <= 15) {
                             EventBus.getDefault().post(OnCardClickedEvent(getTopCard().id))
                         }
                     }

@@ -8,19 +8,16 @@ import android.databinding.DataBindingUtil
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
-import android.widget.TextView
 import android.widget.Toast
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.State
-import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.databinding.ActivityMainBinding
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
@@ -32,27 +29,25 @@ import app.swapper.com.swapper.ui.viewmodel.MainActivityViewModel
 import app.swapper.com.swapper.ui.viewmodel.UserItemViewModel
 import app.swapper.com.swapper.ui.viewmodel.factory.MainActivityViewModelFactory
 import app.swapper.com.swapper.ui.viewmodel.factory.UserItemViewModelFactory
-import com.bumptech.glide.Glide
 import com.facebook.AccessToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.greenrobot.eventbus.Subscribe
 
-class MainActivity : BaseActivity(),
-        NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity() {
 
     private var location: Location? = null
     private var user: User? = null
 
     private val mainViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        val swaggerApp = application as SwaggerApp
+        val swaggerApp = application as SwapperApp
         val apiService = swaggerApp.getRetrofit()
         user = swaggerApp.getUser()
         ViewModelProviders.of(this, MainActivityViewModelFactory(apiService, user?.email)).get(MainActivityViewModel::class.java)
     }
 
     private val userViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        val swaggerApp = application as SwaggerApp
+        val swaggerApp = application as SwapperApp
         val apiService = swaggerApp.getRetrofit()
         user = swaggerApp.getUser()
         ViewModelProviders.of(this, UserItemViewModelFactory(apiService, user)).get(UserItemViewModel::class.java)
@@ -67,6 +62,7 @@ class MainActivity : BaseActivity(),
 
         userViewModel.askServerForUserItems()
         binding.vm = userViewModel
+        binding.userData = user
 
         menuToggle.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -77,10 +73,6 @@ class MainActivity : BaseActivity(),
         }
 
         userViewModel.data.observe(this, android.arch.lifecycle.Observer { it?.let { handleData(it) } })
-
-        nav_view.setNavigationItemSelectedListener(this)
-
-        setUpHeaderData(nav_view.getHeaderView(0))
     }
 
     private fun handleData(data: List<Item>) {
@@ -153,13 +145,13 @@ class MainActivity : BaseActivity(),
     }
 
     private fun setUpHeaderData( navHeader: View) {
-        user?.let {
-            Glide.with(applicationContext).load(it.img).into(nav_view.getHeaderView(0).findViewById(R.id.profileImage))
-            val name = navHeader.findViewById<TextView>(R.id.nameTextView)
-            val email = navHeader.findViewById<TextView>(R.id.emailTextView)
-            name.text = it.name
-            email.text = it.email
-        }
+//        user?.let {
+//            Glide.with(applicationContext).load(it.img).into(nav_view.getHeaderView(0).findViewById(R.id.profileImage))
+//            val name = navHeader.findViewById<TextView>(R.id.nameTextView)
+//            val email = navHeader.findViewById<TextView>(R.id.emailTextView)
+//            name.text = it.name
+//            email.text = it.email
+//        }
     }
 
     override fun onBackPressed() {
@@ -168,33 +160,6 @@ class MainActivity : BaseActivity(),
         } else {
             super.onBackPressed()
         }
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-            R.id.nav_camera -> {
-                startActivity(Intent(this, CreateNewItemActivity::class.java));
-            }
-            R.id.nav_gallery -> {
-                startActivity(Intent(this, UserItemsActivity::class.java));
-            }
-            R.id.nav_slideshow -> {
-                startActivity(HistoryActivity.createNewIntent(applicationContext, location?.latitude, location?.longitude));
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-                logoutDialog()
-            }
-        }
-
-        drawer_layout.closeDrawer(GravityCompat.START)
-        return true
     }
 
     override fun onPermissionGranted(grantedPermissions: Collection<String>) {
@@ -243,6 +208,21 @@ class MainActivity : BaseActivity(),
         } else {
             errorShadow.visibility = View.GONE
         }
+    }
+
+    fun onCreateNewItemClick(view: View) {
+        startActivity(Intent(this, CreateNewItemActivity::class.java))
+        drawer_layout.closeDrawer(GravityCompat.START)
+    }
+
+    fun onHistoryClick(view: View) {
+        startActivity(HistoryActivity.createNewIntent(applicationContext, location?.latitude, location?.longitude))
+        drawer_layout.closeDrawer(GravityCompat.START)
+    }
+
+    fun onMyItemsClick(view: View) {
+        startActivity(Intent(this, UserItemsActivity::class.java))
+        drawer_layout.closeDrawer(GravityCompat.START)
     }
 
     private fun logoutDialog() {

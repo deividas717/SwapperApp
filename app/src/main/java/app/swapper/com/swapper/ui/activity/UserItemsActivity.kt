@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import app.swapper.com.swapper.R
-import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.databinding.ActivityUserItemsBinding
 import app.swapper.com.swapper.events.OnCardClickedEvent
 import app.swapper.com.swapper.ui.viewmodel.factory.UserItemsGalleryViewModel
@@ -24,7 +24,7 @@ class UserItemsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val swaggerApp = (application as SwaggerApp)
+        val swaggerApp = (application as SwapperApp)
         val apiService = swaggerApp.getRetrofit()
         val user = swaggerApp.getUser()
 

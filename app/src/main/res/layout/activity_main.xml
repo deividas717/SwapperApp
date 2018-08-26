@@ -8,6 +8,10 @@
         <variable
             name="vm"
             type="app.swapper.com.swapper.ui.viewmodel.UserItemViewModel" />
+
+        <variable
+            name="userData"
+            type="app.swapper.com.swapper.dto.User" />
     </data>
 
     <android.support.v4.widget.DrawerLayout
@@ -53,9 +57,28 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/activity_main_drawer" />
+            android:fitsSystemWindows="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include
+                    app:userData="@{userData}"
+                    layout="@layout/nav_header_main"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent" />
+
+                <include
+                    android:layout_marginTop="10dp"
+                    layout="@layout/menu_items_layout"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content" />
+
+            </LinearLayout>
+
+        </android.support.design.widget.NavigationView>
 
     </android.support.v4.widget.DrawerLayout>
 

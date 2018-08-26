@@ -9,12 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import app.swapper.com.swapper.LocationData
 import app.swapper.com.swapper.R
-import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.TradeType
 import app.swapper.com.swapper.databinding.FragmentSwipeBinding
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.ui.viewmodel.SwipeViewModel
-import kotlinx.android.synthetic.main.fragment_swipe.*
 
 /**
  * A simple [Fragment] subclass.
@@ -26,7 +25,7 @@ class SwipeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentSwipeBinding>(inflater, R.layout.fragment_swipe, container, false)
 
-        val application = activity?.application as SwaggerApp
+        val application = activity?.application as SwapperApp
 
         swipeViewModel = SwipeViewModel(application.getUser(), application.getRetrofit())
         binding.swipeViewModel = swipeViewModel

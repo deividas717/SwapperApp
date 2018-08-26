@@ -17,6 +17,8 @@ class DetailItemViewModel(private val apiService: ApiService?): ViewModel() {
     val loadingImages = ObservableField<Boolean>(true)
     val title = ObservableField<String>()
 
+    val ownerPhoto = ObservableField<String>()
+
     fun getDetailItemInfo(itemId: Long) {
         val call = apiService?.getDetailItemInfo(itemId)
         call?.enqueue(object : Callback<Item?> {
@@ -29,6 +31,7 @@ class DetailItemViewModel(private val apiService: ApiService?): ViewModel() {
                             description.set(item.description)
                             loadingImages.set(false)
                             title.set(item.title)
+                            ownerPhoto.set(item.user.img)
                         }
                     }
                 }

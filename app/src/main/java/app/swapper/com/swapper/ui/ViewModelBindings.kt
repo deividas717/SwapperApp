@@ -4,7 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.databinding.BindingAdapter
 import android.location.Location
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.GridLayoutManager
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -102,4 +104,15 @@ object ViewModelBindings {
             view.visibility = View.GONE
         }
     }
+
+    @JvmStatic
+    @BindingAdapter("loadCircleImageFromNetwork")
+    fun loadCircleImageFromNetwork(imageView: ImageView, imageUrl: String?) {
+        if (!TextUtils.isEmpty(imageUrl)) {
+            Glide.with(imageView.context).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(imageView)
+        } else {
+            //Glide.with(imageView.context).load(R).apply(RequestOptions.circleCropTransform()).into(imageView)
+        }
+    }
+
 }

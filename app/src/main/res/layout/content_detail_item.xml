@@ -1,10 +1,12 @@
-<layout xmlns:tools="http://schemas.android.com/tools"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="itemData"
             type="app.swapper.com.swapper.ui.viewmodel.DetailItemViewModel" />
@@ -92,14 +94,14 @@
                 </RelativeLayout>
 
                 <android.support.v7.widget.AppCompatImageView
-                    app:srcCompat="@color/colorPrimary"
-                    android:id="@+id/appCompatImageView2"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:id="@+id/ownerPhoto"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/viewB"
+                    app:loadCircleImageFromNetwork="@{itemData.ownerPhoto}"
                     tools:src="@color/colorPrimary" />
 
                 <TextView
@@ -108,27 +110,27 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
-                    app:layout_constraintStart_toEndOf="@+id/appCompatImageView2"
-                    app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
+                    app:layout_constraintBottom_toBottomOf="@+id/ownerPhoto"
+                    app:layout_constraintStart_toEndOf="@+id/ownerPhoto"
+                    app:layout_constraintTop_toTopOf="@+id/ownerPhoto"
                     tools:text="Deividas Aukstakalnis" />
 
                 <TextView
-                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:text="#_See all"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/ownerName"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/ownerName" />
 
                 <!--<android.support.v7.widget.RecyclerView-->
-                    <!--app:otherUserItemRecyclerViewModel="@{vm}"-->
-                    <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
-                    <!--android:orientation="horizontal"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content" />-->
+                <!--app:otherUserItemRecyclerViewModel="@{vm}"-->
+                <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content" />-->
 
             </android.support.constraint.ConstraintLayout>
 
@@ -141,9 +143,9 @@
             android:layout_margin="16dp"
             android:clickable="true"
             android:focusable="true"
-            app:srcCompat="@drawable/ic_add_black_24dp"
             app:layout_anchor="@id/imageLayout"
-            app:layout_anchorGravity="bottom|right|end"/>
+            app:layout_anchorGravity="bottom|right|end"
+            app:srcCompat="@drawable/ic_add_black_24dp" />
 
     </android.support.design.widget.CoordinatorLayout>
 

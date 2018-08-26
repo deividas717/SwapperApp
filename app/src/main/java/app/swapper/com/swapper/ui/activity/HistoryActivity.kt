@@ -5,7 +5,7 @@ import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import app.swapper.com.swapper.R
-import app.swapper.com.swapper.SwaggerApp
+import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.ui.viewmodel.factory.HistoryViewModelFactory
 import app.swapper.com.swapper.ui.viewmodel.HistoryViewModel
 import android.support.v7.widget.LinearLayoutManager
@@ -36,7 +36,7 @@ class HistoryActivity : AppCompatActivity() {
     private var user: User? = null
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        val swaggerApp = application as SwaggerApp
+        val swaggerApp = application as SwapperApp
         apiService = swaggerApp.getRetrofit()
         user = swaggerApp.getUser()
         ViewModelProviders.of(this, HistoryViewModelFactory(apiService, user?.email)).get(HistoryViewModel::class.java)

@@ -67,7 +67,8 @@ class TinderCardView : FrameLayout, View.OnTouchListener {
                 }
                 MotionEvent.ACTION_UP -> {
                     val posX = view.getX() + dX
-                    RxBus.send(TopCardMoveUpEvent(posX))
+                    val posY = view.getY() + dY
+                    RxBus.send(TopCardMoveUpEvent(posX, posY))
                     when {
                         isCardBeyondLeftBoundary(view) -> {
                             RxBus.send(TopCardMovedEvent(-screenWidth.toFloat()))
@@ -111,8 +112,9 @@ class TinderCardView : FrameLayout, View.OnTouchListener {
                     dY = newY - oldY
 
                     val posX = view.getX() + dX
+                    val posY = view.getY() + dY
 
-                    Log.d("ASDASDSDD", "sadffsdf $posX")
+                    Log.d("ASDASDSDD", "sadffsdf $posX $posY")
 
                     EventBus.getDefault().post(CardSwipeAction(!canBeSwipedToRight && posX > 100))
 
