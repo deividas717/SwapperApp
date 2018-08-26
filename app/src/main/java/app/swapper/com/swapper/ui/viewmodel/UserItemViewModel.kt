@@ -129,6 +129,7 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
                         response.let {
                             val list = response?.body()
                             list?.let {
+                                Log.d("ASDUSADSD", "getMoreCards")
                                 downlaodedSize += it.size
                                 allReceivedData.addAll(it)
                                 data.value = it
@@ -137,7 +138,7 @@ class UserItemViewModel(private val service: ApiService?, private val user: User
                     }
 
                     override fun onFailure(call: Call<List<Item>>?, t: Throwable?) {
-
+                        Log.d("ASDUSADSD", "onFailure")
                     }
                 })
             }

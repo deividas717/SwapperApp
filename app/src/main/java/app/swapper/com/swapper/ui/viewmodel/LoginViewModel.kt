@@ -66,6 +66,7 @@ class LoginViewModel(private val prefs: SharedPreferencesManager, private val ap
         val email = jsonObj.getString("email")
         val photoUrl = "https://graph.facebook.com/$fbUserId/picture?type=large"
 
+        Log.d("ASDUIASDASDd", "${accessToken.accessToken} ${accessToken.userId} ${accessToken.expiresIn}")
         val user = User(serveUserId, name, photoUrl, email)
         prefs.saveUser(user)
         prefs.saveAccessToken(accessToken)

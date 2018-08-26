@@ -64,8 +64,7 @@ class LocationService : Service() {
         val result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
         result.addOnCompleteListener {
             try {
-                val locationServiceResponse = it.getResult(ApiException::class.java)
-                Log.d("ASDGUIASDS", "ok");
+                it.getResult(ApiException::class.java)
             } catch (exception : ApiException) {
                 when (exception.statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
@@ -73,9 +72,7 @@ class LocationService : Service() {
                             val resolvable = exception as ResolvableApiException
                             EventBus.getDefault().post(resolvable)
                         } catch (e : IntentSender.SendIntentException) {
-                            Log.d("ASDGUIASDS", "bad1");
                         } catch (e : ClassCastException) {
-                            Log.d("ASDGUIASDS", "bad2");
                         }
                     }
                     LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {

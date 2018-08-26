@@ -1,14 +1,12 @@
 package app.swapper.com.swapper.ui.viewmodel
 
-import android.arch.lifecycle.ViewModel
-import android.arch.paging.PagedList
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.ViewModel
 import android.arch.paging.LivePagedListBuilder
+import android.arch.paging.PagedList
 import app.swapper.com.swapper.ItemDataSourceFactory
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.networking.ApiService
-import app.swapper.com.swapper.NetworkState
-import app.swapper.com.swapper.adapter.ItemKeyedItemDataSource
 
 class HistoryViewModel(apiService: ApiService?, email: String?): ViewModel() {
 

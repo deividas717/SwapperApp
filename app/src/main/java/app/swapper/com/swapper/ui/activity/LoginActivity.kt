@@ -4,31 +4,46 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Log
 import android.widget.Toast
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.ui.observableData.LoginStatus
 import app.swapper.com.swapper.ui.viewmodel.LoginViewModel
 import app.swapper.com.swapper.databinding.ActivityLoginBinding
+import app.swapper.com.swapper.networking.ApiService
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_login.*
+import retrofit2.Retrofit
 import java.util.*
+import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var callbackManager: CallbackManager
     private lateinit var loginViewModel : LoginViewModel
 
+    @Inject
+    lateinit var prefs: SharedPreferencesManager
+
+    @Inject
+    lateinit var apiService: ApiService
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         FacebookSdk.sdkInitialize(this)
         callbackManager = CallbackManager.Factory.create()
 
-        loginViewModel = LoginViewModel(SharedPreferencesManager.getInstance(applicationContext), (application as SwapperApp).getRetrofit())
+        Log.d("ASDUIASDSD", "${apiService.hashCode()}")
+
+        loginViewModel = LoginViewModel(prefs, apiService)
         val binding: ActivityLoginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.loginViewModel = loginViewModel
 

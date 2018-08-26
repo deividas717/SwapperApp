@@ -10,21 +10,23 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.v4.content.FileProvider
-import app.swapper.com.swapper.ui.viewmodel.factory.CreateNewItemViewModelFactory
 import app.swapper.com.swapper.LocationData
 import app.swapper.com.swapper.R
-import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.TradeType
-import app.swapper.com.swapper.utils.Utils
 import app.swapper.com.swapper.databinding.ActivityCreateNewItemBinding
 import app.swapper.com.swapper.dto.Item
-import app.swapper.com.swapper.dto.User
+import app.swapper.com.swapper.networking.ApiService
+import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.ui.viewmodel.CreateNewItemViewModel
+import app.swapper.com.swapper.ui.viewmodel.factory.CreateNewItemViewModelFactory
+import app.swapper.com.swapper.utils.Utils
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_create_new_item.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 class CreateNewItemActivity : BaseActivity() {
 
@@ -33,18 +35,20 @@ class CreateNewItemActivity : BaseActivity() {
     private lateinit var photosArray : MutableList<File>
 
     private lateinit var viewModel: CreateNewItemViewModel
-    private var user: User? = null
+
+    @Inject
+    lateinit var prefs: SharedPreferencesManager
+
+    @Inject
+    lateinit var apiService: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         if (intent.getBooleanExtra("displayBackBtn", false)) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true);
         }
-
-        val swaggerApp = application as SwapperApp
-        val apiService = swaggerApp.getRetrofit()
-        user = swaggerApp.getUser()
 
         viewModel = ViewModelProviders.of(this, CreateNewItemViewModelFactory(apiService)).get(CreateNewItemViewModel::class.java)
         viewModel.isItemCreated.observe(this, android.arch.lifecycle.Observer { it?.let { if (it) finish() } })
@@ -59,7 +63,7 @@ class CreateNewItemActivity : BaseActivity() {
         }
 
         send.setOnClickListener {
-            Utils.ifNotNull(LocationData.location, user) { location, user ->
+            Utils.ifNotNull(LocationData.location, prefs.getUser()) { location, user ->
                 run {
                     val item = Item(itemTitle.text.toString(),
                             description.text.toString(),

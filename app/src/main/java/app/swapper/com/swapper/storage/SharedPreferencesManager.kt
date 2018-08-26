@@ -6,11 +6,15 @@ import app.swapper.com.swapper.SingletonHolder
 import app.swapper.com.swapper.dto.AccessToken
 import app.swapper.com.swapper.dto.User
 import com.elvishew.xlog.XLog
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by Deividas on 2018-04-08.
  */
-class SharedPreferencesManager private constructor(context: Context) {
+
+@Singleton
+class SharedPreferencesManager @Inject constructor( context: Context) {
 
     private val name = "name"
     private val picture = "picture"
@@ -21,8 +25,6 @@ class SharedPreferencesManager private constructor(context: Context) {
     private val expiresIn = "expiresIn"
 
     private var prefs : SharedPreferences = context.getSharedPreferences("USER_INFO_PREFS", Context.MODE_PRIVATE)
-
-    companion object : SingletonHolder<SharedPreferencesManager, Context>(::SharedPreferencesManager)
 
     fun saveUser(user: User) {
         val editor = prefs.edit()
@@ -51,7 +53,7 @@ class SharedPreferencesManager private constructor(context: Context) {
                 .apply()
     }
 
-    fun getAccessToken(): AccessToken? {
+    fun getAccessToken(): AccessToken {
         val userId = prefs.getLong(userId, -1L)
         val accessToken = prefs.getString(accessToken, "")
         val expiresIn = prefs.getLong(expiresIn, -1)

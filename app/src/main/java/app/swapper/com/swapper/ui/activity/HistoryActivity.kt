@@ -24,22 +24,26 @@ import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.events.LocationChangeEvent
 import app.swapper.com.swapper.events.OnItemsDelete
 import app.swapper.com.swapper.networking.ApiService
+import app.swapper.com.swapper.storage.SharedPreferencesManager
+import dagger.android.AndroidInjection
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
+import javax.inject.Inject
 
 class HistoryActivity : AppCompatActivity() {
 
     private lateinit var historyAdapter: HistoryItemsAdapter
     private lateinit var deleteIcon: MenuItem
-    private var apiService: ApiService? = null
-    private var user: User? = null
+
+    @Inject
+    lateinit var prefs: SharedPreferencesManager
+
+    @Inject
+    lateinit var apiService: ApiService
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        val swaggerApp = application as SwapperApp
-        apiService = swaggerApp.getRetrofit()
-        user = swaggerApp.getUser()
-        ViewModelProviders.of(this, HistoryViewModelFactory(apiService, user?.email)).get(HistoryViewModel::class.java)
+        ViewModelProviders.of(this, HistoryViewModelFactory(apiService, prefs.getUser()?.email)).get(HistoryViewModel::class.java)
     }
 
     override fun onResume() {
@@ -59,6 +63,7 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
 
@@ -116,13 +121,13 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmationDialog() {
-        val userId = user?.userId
+        val userId = prefs.getUser()?.userId
         if (userId != null) {
             val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
-                        val result = apiService?.deleteUserHistoryItems(userId, historyAdapter.selectedItems)
-                        result?.enqueue(object : retrofit2.Callback<ResponseBody> {
+                        val result = apiService.deleteUserHistoryItems(userId, historyAdapter.selectedItems)
+                        result.enqueue(object : retrofit2.Callback<ResponseBody> {
                             override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
                                 when (response?.isSuccessful) {
                                     true -> {

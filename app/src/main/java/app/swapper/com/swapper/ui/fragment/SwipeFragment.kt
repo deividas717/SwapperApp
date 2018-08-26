@@ -27,8 +27,8 @@ class SwipeFragment : Fragment() {
 
         val application = activity?.application as SwapperApp
 
-        swipeViewModel = SwipeViewModel(application.getUser(), application.getRetrofit())
-        binding.swipeViewModel = swipeViewModel
+//        swipeViewModel = SwipeViewModel(application.getUser(), application.getRetrofit())
+//        binding.swipeViewModel = swipeViewModel
 
 //        swipeView = binding.root.findViewById(R.id.swipeView);
 //        swipeView.getBuilder<SwipeView, SwipeViewBuilder<SwipeView>>()

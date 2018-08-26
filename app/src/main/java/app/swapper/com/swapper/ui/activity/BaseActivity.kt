@@ -1,14 +1,10 @@
 package app.swapper.com.swapper.ui.activity
 
-import android.Manifest
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
-import android.graphics.Color
-import android.location.Location
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import app.swapper.com.swapper.events.LocationChangeEvent
+import android.widget.Toast
+import com.google.android.gms.common.api.ResolvableApiException
 import com.markodevcic.peko.Peko
 import com.markodevcic.peko.PermissionRequestResult
 import com.markodevcic.peko.rationale.AlertDialogPermissionRationale
@@ -16,9 +12,6 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import android.content.Intent
-import android.widget.Toast
-import com.google.android.gms.common.api.ResolvableApiException
 
 abstract class BaseActivity : AppCompatActivity() {
     companion object {

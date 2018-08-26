@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -22,6 +23,7 @@ import app.swapper.com.swapper.databinding.ActivityMainBinding
 import app.swapper.com.swapper.dto.Item
 import app.swapper.com.swapper.dto.User
 import app.swapper.com.swapper.events.*
+import app.swapper.com.swapper.networking.ApiService
 import app.swapper.com.swapper.service.LocationService
 import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.swipableCard.TinderCardView
@@ -30,31 +32,38 @@ import app.swapper.com.swapper.ui.viewmodel.UserItemViewModel
 import app.swapper.com.swapper.ui.viewmodel.factory.MainActivityViewModelFactory
 import app.swapper.com.swapper.ui.viewmodel.factory.UserItemViewModelFactory
 import com.facebook.AccessToken
+import com.google.firebase.messaging.FirebaseMessaging
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.greenrobot.eventbus.Subscribe
+import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
     private var location: Location? = null
-    private var user: User? = null
+
+    @Inject
+    lateinit var prefs: SharedPreferencesManager
+
+    @Inject
+    lateinit var apiService: ApiService
 
     private val mainViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        val swaggerApp = application as SwapperApp
-        val apiService = swaggerApp.getRetrofit()
-        user = swaggerApp.getUser()
-        ViewModelProviders.of(this, MainActivityViewModelFactory(apiService, user?.email)).get(MainActivityViewModel::class.java)
+        ViewModelProviders.of(this, MainActivityViewModelFactory(apiService, prefs.getUser()?.email)).get(MainActivityViewModel::class.java)
     }
 
     private val userViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        val swaggerApp = application as SwapperApp
-        val apiService = swaggerApp.getRetrofit()
-        user = swaggerApp.getUser()
-        ViewModelProviders.of(this, UserItemViewModelFactory(apiService, user)).get(UserItemViewModel::class.java)
+        ViewModelProviders.of(this, UserItemViewModelFactory(apiService, prefs.getUser())).get(UserItemViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
+
+        prefs.getUser()?.let {
+            FirebaseMessaging.getInstance().subscribeToTopic(it.userId.toString())
+        }
 
         requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -62,7 +71,7 @@ class MainActivity : BaseActivity() {
 
         userViewModel.askServerForUserItems()
         binding.vm = userViewModel
-        binding.userData = user
+        binding.userData = prefs.getUser()
 
         menuToggle.setOnClickListener {
             if (!drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -76,6 +85,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun handleData(data: List<Item>) {
+        Log.d("ASDUIASDSD", data.size.toString())
         if (data.isNotEmpty()) {
             addCards(0, false)
         } else if (cardStackView.childCount == 0) {
@@ -229,7 +239,6 @@ class MainActivity : BaseActivity() {
         val dialogClickListener = DialogInterface.OnClickListener { dialog, which ->
             when (which) {
                 DialogInterface.BUTTON_POSITIVE -> {
-                    val prefs = SharedPreferencesManager.getInstance(applicationContext)
                     prefs.clearAllData()
                     AccessToken.setCurrentAccessToken(null)
                     startActivity(Intent(this, LoginActivity::class.java))

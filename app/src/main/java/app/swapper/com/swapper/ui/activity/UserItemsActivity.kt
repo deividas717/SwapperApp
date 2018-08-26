@@ -12,23 +12,30 @@ import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.databinding.ActivityUserItemsBinding
 import app.swapper.com.swapper.events.OnCardClickedEvent
+import app.swapper.com.swapper.networking.ApiService
+import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.ui.viewmodel.factory.UserItemsGalleryViewModel
 import app.swapper.com.swapper.ui.viewmodel.UserProfileItemViewModel
+import dagger.android.AndroidInjection
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import javax.inject.Inject
 
 class UserItemsActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserProfileItemViewModel
 
+    @Inject
+    lateinit var prefs: SharedPreferencesManager
+
+    @Inject
+    lateinit var apiService: ApiService
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
-        val swaggerApp = (application as SwapperApp)
-        val apiService = swaggerApp.getRetrofit()
-        val user = swaggerApp.getUser()
-
-        userViewModel = ViewModelProviders.of(this, UserItemsGalleryViewModel(apiService, user)).get(UserProfileItemViewModel::class.java)
+        userViewModel = ViewModelProviders.of(this, UserItemsGalleryViewModel(apiService, prefs.getUser())).get(UserProfileItemViewModel::class.java)
         val binding: ActivityUserItemsBinding = DataBindingUtil.setContentView(this, R.layout.activity_user_items)
         binding.viewModel = userViewModel
 

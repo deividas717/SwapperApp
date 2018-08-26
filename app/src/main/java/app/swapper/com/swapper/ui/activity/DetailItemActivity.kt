@@ -8,6 +8,8 @@ import android.os.Bundle
 import app.swapper.com.swapper.R
 import app.swapper.com.swapper.SwapperApp
 import app.swapper.com.swapper.databinding.ActivityDetailItemBinding
+import app.swapper.com.swapper.networking.ApiService
+import app.swapper.com.swapper.storage.SharedPreferencesManager
 import app.swapper.com.swapper.ui.viewmodel.factory.DetailItemViewModelFactory
 import app.swapper.com.swapper.ui.viewmodel.DetailItemViewModel
 import app.swapper.com.swapper.utils.Constants
@@ -15,22 +17,28 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_detail_item.*
 import kotlinx.android.synthetic.main.content_detail_item.*
 import com.synnapps.carouselview.ImageListener
+import dagger.android.AndroidInjection
 import java.io.File
+import javax.inject.Inject
 
 
 class DetailItemActivity : BaseActivity() {
     private lateinit var viewModel: DetailItemViewModel
     private val data = mutableListOf<String>()
 
+    @Inject
+    lateinit var prefs: SharedPreferencesManager
+
+    @Inject
+    lateinit var apiService: ApiService
+
     private var imageListener: ImageListener = ImageListener { position, imageView ->
         Glide.with(applicationContext).load(Constants.serverAddress + "api/image" + File.separator + data[position]).into(imageView)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-
-        val swaggerApp = application as SwapperApp
-        val apiService = swaggerApp.getRetrofit()
 
         viewModel = ViewModelProviders.of(this, DetailItemViewModelFactory(apiService)).get(DetailItemViewModel::class.java)
         val binding: ActivityDetailItemBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail_item)
